@@ -104,3 +104,12 @@ def fx_ugoira_zip(fx_tmpdir):
 
     with file.open('rb') as f:
         return f.read()
+
+
+@fixture
+def fx_ugoira_frames():
+    return {
+        '000000.jpg': 1000,
+        '000001.jpg': 2000,
+        '000002.jpg': 3000,
+    }
