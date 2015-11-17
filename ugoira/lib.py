@@ -62,7 +62,11 @@ def download_zip(image_id: int):
     data = json.loads(ugoira_data_regex.search(res.text).group(1))
     pixiv.headers['Referer'] = image_main_url
     res = pixiv.head(data['src'])
+    if res.status_code != 200:
+        raise PixivError('Wrong image src. Please report it with image-id')
     res = pixiv.get(data['src'])
+    if res.status_code != 200:
+        raise PixivError('Can not download image zip')
     frames = {f['file']: f['delay'] for f in data['frames']}
     return res.content, frames
 
