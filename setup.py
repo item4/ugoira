@@ -3,10 +3,12 @@ from setuptools import find_packages, setup
 install_requires = {
     'click >= 5.1',
     'requests >= 2.8.1',
+    'Wand >= 0.4.1',
 }
 
 tests_require = {
     'pytest >= 2.8.2',
+    'httpretty >= 0.8.10',
 }
 
 extras_require = {
