@@ -100,7 +100,7 @@ def fx_ugoira_zip(fx_tmpdir):
 
     with zipfile.ZipFile(str(file), 'w') as f:
         for img in imgs:
-            f.write(str(img))
+            f.write(str(img), img.name)
 
     with file.open('rb') as f:
         return f.read()
