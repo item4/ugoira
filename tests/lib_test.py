@@ -12,7 +12,24 @@ def test_login_pw_is_too_short(fx_too_short_id_pw):
         login(*fx_too_short_id_pw)
 
 
+def test_login_pw_is_too_long(fx_too_long_id_pw):
+    with pytest.raises(PixivError):
+        login(*fx_too_long_id_pw)
+
+
 def test_login_invalid(fx_invalid_id_pw):
+    with pytest.raises(PixivError):
+        login(*fx_invalid_id_pw)
+
+
+@httpretty.activate
+def test_login_too_many_fail(fx_invalid_id_pw):
+    httpretty.register_uri(
+        httpretty.GET,
+        'https://www.secure.pixiv.net/login.php',
+        body='ログインの制限を開始しました',
+    )
+
     with pytest.raises(PixivError):
         login(*fx_invalid_id_pw)
 

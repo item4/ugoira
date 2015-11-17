@@ -46,6 +46,11 @@ def fx_too_short_id_pw():
 
 
 @fixture
+def fx_too_long_id_pw():
+    return 'test', '1'*33
+
+
+@fixture
 def fx_invalid_id_pw():
     return 'test', 'test'
 
