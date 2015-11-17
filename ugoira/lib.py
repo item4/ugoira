@@ -1,4 +1,5 @@
 import json
+import pathlib
 import re
 import tempfile
 import zipfile
@@ -72,9 +73,11 @@ def download_zip(image_id: int):
 
 
 def make_gif(filename: str, file_data: bytes, frames: dict, div_by=1):
-    with tempfile.NamedTemporaryFile(mode='wb', suffix='.zip') as tempf:
-        tempf.write(file_data)
-        with zipfile.ZipFile(tempf.name) as zipf:
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        file = pathlib.Path(tmpdirname) / 'temp.zip'
+        with file.open('wb') as f:
+            f.write(file_data)
+        with zipfile.ZipFile(str(file)) as zipf:
             files = zipf.namelist()
             first_image = zipf.read(files[0])
 
