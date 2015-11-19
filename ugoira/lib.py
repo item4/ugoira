@@ -46,7 +46,9 @@ def login(id, password):
         'pass': password,
         'skip': '1'
     })
-    if 'ログインの制限を開始しました' in rv.text:
+
+    if '誤入力が続いたため、アカウントのロックを行いました。しばらく経ってからログインをお試しください。' \
+            in rv.text:
         raise PixivError('Your login is restricted. Try it after.')
     return 'login.php' not in rv.url
 
