@@ -5,7 +5,6 @@ import tempfile
 import zipfile
 
 from requests import Session
-from wand.color import Color
 from wand.image import Image
 
 
