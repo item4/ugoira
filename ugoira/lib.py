@@ -5,6 +5,7 @@ import tempfile
 import zipfile
 
 from requests import Session
+from requests.exceptions import ConnectionError
 from wand.image import Image
 
 
@@ -35,7 +36,10 @@ def login(id, password):
     if len(password) > 32:
         raise PixivError('Password is too long! Must be shorter than 32.')
 
-    pixiv.get(pixiv_url['index'])
+    try:
+        pixiv.get(pixiv_url['index'])
+    except ConnectionError as e:
+        raise PixivError(str(e))
     rv = pixiv.post(pixiv_url['login'], data={
         'mode': 'login',
         'pixiv_id': id,
