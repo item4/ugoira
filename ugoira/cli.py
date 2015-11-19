@@ -1,5 +1,3 @@
-import pathlib
-
 from .lib import PixivError, download_zip, is_ugoira, login, make_gif, save_zip
 
 from click import Path, argument, command, echo, option
