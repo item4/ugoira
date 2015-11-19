@@ -52,7 +52,7 @@ def fx_too_long_id_pw():
 
 @fixture
 def fx_invalid_id_pw():
-    return 'test', 'test'
+    return 'invalid_id', 'invalid_pw'
 
 
 @fixture
