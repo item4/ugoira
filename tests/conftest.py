@@ -5,7 +5,7 @@ import zipfile
 from ugoira.lib import login
 
 from click.testing import CliRunner
-from pytest import fixture, skip
+from pytest import fixture, skip, yield_fixture
 from wand.color import Color
 from wand.image import Image
 
@@ -114,3 +114,13 @@ def fx_ugoira_frames():
         '000001.jpg': 2000,
         '000002.jpg': 3000,
     }
+
+
+@yield_fixture(scope='function')
+def fx_httpretty():
+    import httpretty
+    httpretty.reset()
+    httpretty.enable()
+    yield httpretty
+    httpretty.disable()
+    httpretty.reset()
