@@ -2,6 +2,11 @@ from ugoira.cli import ugoira
 
 
 def test_too_short_password(fx_clirunner, fx_too_short_id_pw):
+    """Test for command with too short password.
+
+    It must will be fail.
+    """
+
     id, pw = fx_too_short_id_pw
     result = fx_clirunner.invoke(
         ugoira,
@@ -13,6 +18,11 @@ def test_too_short_password(fx_clirunner, fx_too_short_id_pw):
 
 
 def test_too_long_password(fx_clirunner, fx_too_long_id_pw):
+    """Test for command with too long password.
+
+    It must will be fail.
+    """
+
     id, pw = fx_too_long_id_pw
     result = fx_clirunner.invoke(
         ugoira,
@@ -24,6 +34,11 @@ def test_too_long_password(fx_clirunner, fx_too_long_id_pw):
 
 
 def test_invalid_password(fx_httpretty, fx_clirunner, fx_invalid_id_pw):
+    """Test for command with invalid id/pw pair.
+
+    It must will be fail.
+    """
+
     fx_httpretty.register_uri(
         fx_httpretty.GET,
         'http://www.pixiv.net/',
@@ -51,6 +66,13 @@ def test_invalid_password(fx_httpretty, fx_clirunner, fx_invalid_id_pw):
 
 
 def test_too_many_login_tried(fx_httpretty, fx_clirunner, fx_invalid_id_pw):
+    """Test for command with invalid id/pw pair.
+
+    It must will be fail.
+
+    Known issue: This test was broken with another tests. Must run it solo.
+    """
+
     fx_httpretty.register_uri(
         fx_httpretty.GET,
         'http://www.pixiv.net/',
