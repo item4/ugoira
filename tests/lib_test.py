@@ -7,6 +7,7 @@ from ugoira.lib import (PixivError, download_zip, is_ugoira, login, make_gif,
                         save_zip)
 from wand.image import Image
 
+
 def test_login_valid(fx_valid_id_pw):
     assert login(*fx_valid_id_pw)
 
@@ -22,16 +23,16 @@ def test_login_pw_is_too_long(fx_too_long_id_pw):
 
 
 def test_login_invalid(fx_invalid_id_pw):
-    with pytest.raises(PixivError):
-        login(*fx_invalid_id_pw)
+    assert not login(*fx_invalid_id_pw)
 
 
 @httpretty.activate
 def test_login_too_many_fail(fx_invalid_id_pw):
     httpretty.register_uri(
-        httpretty.GET,
+        httpretty.POST,
         'https://www.secure.pixiv.net/login.php',
-        body='ログインの制限を開始しました',
+        body='誤入力が続いたため、アカウントのロックを行いました。'
+             'しばらく経ってからログインをお試しください。',
     )
 
     with pytest.raises(PixivError):

@@ -64,6 +64,7 @@ def fx_login_only(fx_valid_id_pw):
 
     return True
 
+
 @fixture
 def fx_clirunner():
     return CliRunner()
