@@ -23,8 +23,10 @@ def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
             pass
         else:
             echo('Login failed.', err=True)
+            raise SystemExit(1)
     except PixivError as e:
         echo(e, err=True)
+        raise SystemExit(1)
     if is_ugoira(image_id):
         blob, frames = download_zip(image_id)
         if dest.endswith('.zip'):
@@ -38,4 +40,4 @@ def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
             echo('download completed at {} as gif'.format(dest))
     else:
         echo('Given image id is not ugoira.', err=True)
-
+        raise SystemExit(1)
