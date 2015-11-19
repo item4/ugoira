@@ -1,5 +1,4 @@
 import pathlib
-import sys
 
 from .lib import PixivError, download_zip, is_ugoira, login, make_gif, save_zip
 
@@ -23,9 +22,9 @@ def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
         if login(id, password):
             pass
         else:
-            echo('Login failed.', file=sys.stderr)
+            echo('Login failed.', err=True)
     except PixivError as e:
-        echo(e, file=sys.stderr)
+        echo(e, err=True)
     if is_ugoira(image_id):
         blob, frames = download_zip(image_id)
         if dest.endswith('.zip'):
