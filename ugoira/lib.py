@@ -39,18 +39,25 @@ def login(id, password):
     try:
         pixiv.get(pixiv_url['index'])
     except ConnectionError as e:
-        raise PixivError(str(e))
-    rv = pixiv.post(pixiv_url['login'], data={
-        'mode': 'login',
-        'pixiv_id': id,
-        'pass': password,
-        'skip': '1'
-    })
+        raise PixivError('Error occured at login process. '
+                         'Please report this error with this info:'
+                         ' GET + ' + str(e))
+    try:
+        rv = pixiv.post(pixiv_url['login'], data={
+            'mode': 'login',
+            'pixiv_id': id,
+            'pass': password,
+            'skip': '1'
+        })
+    except ConnectionError as e:
+        raise PixivError('Error occured at login process. '
+                         'Please report this error with this info:'
+                         ' POST + ' + str(e))
 
     if '誤入力が続いたため、アカウントのロックを行いました。しばらく経ってからログインをお試しください。' \
             in rv.text:
         raise PixivError('Your login is restricted. Try it after.')
-    return 'login.php' not in rv.url
+    return 'http://www.pixiv.net/' == rv.url
 
 
 class PixivError(Exception):
