@@ -1,8 +1,10 @@
 import contextlib
+import zipfile
 
 import httpretty
 import pytest
-from ugoira.lib import PixivError, download_zip, is_ugoira, login, make_gif
+from ugoira.lib import (PixivError, download_zip, is_ugoira, login, make_gif,
+                        save_zip)
 from wand.image import Image
 
 def test_login_valid(fx_valid_id_pw):
@@ -148,3 +150,42 @@ def test_make_gif(monkeypatch,
         assert img.sequence[0].delay == 100
         assert img.sequence[1].delay == 200
         assert img.sequence[2].delay == 300
+
+
+@httpretty.activate
+def test_save_zip(monkeypatch,
+                  fx_tmpdir,
+                  fx_ugoira_body,
+                  fx_ugoira_zip,
+                  fx_ugoira_frames):
+    @contextlib.contextmanager
+    def fake():
+        yield str(fx_tmpdir)
+    monkeypatch.setattr('tempfile.TemporaryDirectory', fake)
+
+    httpretty.register_uri(
+        httpretty.GET,
+        'http://www.pixiv.net/member_illust.php?mode=medium&illust_id=53239740',
+        body=fx_ugoira_body,
+    )
+    httpretty.register_uri(
+        httpretty.HEAD,
+        'http://i1.pixiv.net/img-zip-ugoira/img/2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+        status=200,
+    )
+    httpretty.register_uri(
+        httpretty.GET,
+        'http://i1.pixiv.net/img-zip-ugoira/img/2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+        body=fx_ugoira_zip,
+    )
+    data, frames = download_zip(53239740)
+    file = fx_tmpdir / 'test.zip'
+
+    save_zip(str(file), data)
+
+    with zipfile.ZipFile(str(file)) as f:
+        namelist = f.namelist()
+        assert len(namelist) == len(fx_ugoira_frames)
+
+        for filename in fx_ugoira_frames.keys():
+            assert filename in namelist
