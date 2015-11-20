@@ -8,7 +8,7 @@ install_requires = {
 
 tests_require = {
     'pytest >= 2.8.2',
-    'httpretty >= 0.8.10',
+    'responses >= 0.5.0',
 }
 
 extras_require = {
