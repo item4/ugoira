@@ -80,7 +80,7 @@ def login(id, password):
     if '誤入力が続いたため、アカウントのロックを行いました。しばらく経ってからログインをお試しください。' \
             in rv.text:
         raise PixivError('Your login is restricted. Try it after.')
-    return 'http://www.pixiv.net/' == rv.url
+    return pixiv_url['index'] == rv.url
 
 
 class PixivError(Exception):
