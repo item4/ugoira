@@ -20,13 +20,8 @@ __all__ = 'ugoira',
                                               ' images by using this option.'
                                               ' Default value is 1'
                                               ' (normal speed)')
-@argument('image-id', type=int, help='ugoira ID.'
-                                     ' You can get ID from Pixiv URL.'
-                                     'number is image-id at '
-                                     'http://www.pixiv.net/member_illust.php'
-                                     '?mode=medium&illust_id=(number)')
-@argument('dest', type=Path(), help='file dest. If you give .zip or .gif'
-                                    'suffix, make file by given suffix')
+@argument('image-id', type=int)
+@argument('dest', type=Path())
 def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
     """ugoira command for download Pixiv Ugokuillust."""
 
