@@ -8,7 +8,11 @@ from wand.image import Image
 
 
 def test_login_valid(fx_valid_id_pw):
-    """Test :func:`ugoira.lib.login` successfully."""
+    """Test :func:`ugoira.lib.login` successfully.
+
+    Known issue: This test was broken with another tests. Must run it solo.
+
+    """
 
     assert login(*fx_valid_id_pw)
 
@@ -69,6 +73,8 @@ def test_login_too_many_fail(fx_invalid_id_pw):
     """Test :func:`ugoira.lib.login` with too many fail before.
 
     It must raise :class:`ugoira.lib.PixivError`.
+
+    Known issue: This test was broken with another tests. Must run it solo.
     """
 
     import httpretty
