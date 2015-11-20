@@ -1,4 +1,5 @@
 from click.testing import CliRunner
+import responses
 from ugoira.cli import ugoira
 
 
@@ -41,24 +42,29 @@ def test_too_many_login_tried(fx_invalid_id_pw):
 
     It must will be fail.
 
-    Known issue: This test was broken with another tests. Must run it solo.
+    Warn! Responses is so fool. Be careful of order of tests
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'https://www.secure.pixiv.net/login.php',
-            body='誤入力が続いたため、アカウントのロックを行いました。'
-                 'しばらく経ってからログインをお試しください。',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': '誤入力が続いたため、アカウントのロックを行いました。'
+                    'しばらく経ってからログインをお試しください。',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
 
         id, pw = fx_invalid_id_pw
         runner = CliRunner()
@@ -68,42 +74,59 @@ def test_too_many_login_tried(fx_invalid_id_pw):
         )
         assert result.exit_code == 1
         assert result.output.strip() == \
-               'Your login is restricted. Try it after.'
+            'Your login is restricted. Try it after.'
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_invalid_password(fx_invalid_id_pw):
     """Test for command with invalid id/pw pair.
 
     It must will be fail.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'https://www.secure.pixiv.net/login.php',
-            status=301,
-            forcing_headers={'Location': 'https://example.com/'},
-        )
-        httpretty.register_uri(
-            httpretty.GET,
-            'https://example.com/',
-            body='fail',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 301,
+            'adding_headers': {
+                'Location': 'http://example.com/'
+            },
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://example.com/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        # Responses is so fool. It try old mapping. So We needs some trick :(
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'http://www.pixiv.net/',
+            'body': '????',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 301,
+            'adding_headers': {
+                'Location': 'http://example.com/'
+            },
+        })
 
         id, pw = fx_invalid_id_pw
         runner = CliRunner()
@@ -114,9 +137,4 @@ def test_invalid_password(fx_invalid_id_pw):
         assert result.exit_code == 1
         assert result.output.strip() == 'Login failed.'
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()

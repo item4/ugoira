@@ -2,6 +2,7 @@ import contextlib
 import zipfile
 
 import pytest
+import responses
 from ugoira.lib import (PixivError, download_zip, is_ugoira, login, make_gif,
                         save_zip)
 from wand.image import Image
@@ -10,128 +11,147 @@ from wand.image import Image
 def test_login_valid(fx_valid_id_pw):
     """Test :func:`ugoira.lib.login` successfully.
 
-    Known issue: This test was broken with another tests. Must run it solo.
-
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'https://www.secure.pixiv.net/login.php',
-            status=301,
-            forcing_headers={'Location': 'http://www.pixiv.net/'},
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'http://www.pixiv.net/',
-            body='login',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 301,
+            'adding_headers': {
+                'Location': 'http://www.pixiv.net/'
+            },
+        })
+        # Responses is so fool. It try old mapping. So We needs some trick :(
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'http://example.com',
+            'body': '????',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 301,
+            'adding_headers': {
+                'Location': 'http://www.pixiv.net/'
+            },
+        })
 
         assert login(*fx_valid_id_pw)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_login_pw_is_too_short(fx_too_short_id_pw):
     """Test :func:`ugoira.lib.login` with too short password.
 
     It must raise :class:`ugoira.lib.PixivError`.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
         with pytest.raises(PixivError):
             login(*fx_too_short_id_pw)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_login_pw_is_too_long(fx_too_long_id_pw):
     """Test :func:`ugoira.lib.login` with too long password.
 
     It must raise :class:`ugoira.lib.PixivError`.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
         with pytest.raises(PixivError):
             login(*fx_too_long_id_pw)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_login_invalid(fx_invalid_id_pw):
     """Test :func:`ugoira.lib.login` with invalid id/pw pair.
 
     It must raise :class:`ugoira.lib.PixivError`.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'https://www.secure.pixiv.net/login.php',
-            status=301,
-            location='https://example.com/',
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'https://example.com/',
-            body='fail',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 301,
+            'adding_headers': {
+                'Location': 'http://example1.com/'
+            },
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://example1.com/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        # Responses is so fool. It try old mapping. So We needs some trick :(
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'http://www.pixiv.net/',
+            'body': '????',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 301,
+            'adding_headers': {
+                'Location': 'http://example1.com/'
+            },
+        })
 
         assert not login(*fx_invalid_id_pw)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_login_too_many_fail(fx_invalid_id_pw):
@@ -139,179 +159,188 @@ def test_login_too_many_fail(fx_invalid_id_pw):
 
     It must raise :class:`ugoira.lib.PixivError`.
 
-    Known issue: This test was broken with another tests. Must run it solo.
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
-        httpretty.register_uri(
-            httpretty.POST,
-            'https://www.secure.pixiv.net/login.php',
-            body='誤入力が続いたため、アカウントのロックを行いました。'
-                 'しばらく経ってからログインをお試しください。',
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'Just touch, Do not access it really.'
+                    ' Because they block us.',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': '誤入力が続いたため、アカウントのロックを行いました。'
+                    'しばらく経ってからログインをお試しください。',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+        })
 
         with pytest.raises(PixivError):
             login(*fx_invalid_id_pw)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
-def test_is_ugoira(fx_ugoira_body, fx_non_ugoira_body):
-    """Test :func:`ugoira.lib.ugoira` with two cases.
+def test_is_ugoira_true(fx_ugoira_body):
+    """Test :func:`ugoira.lib.ugoira`.
 
-    One is :const:`True` and Other is :const:`False`
+    Result is :const:`True`.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53239740',
-            body=fx_ugoira_body,
-        )
-        assert is_ugoira(53239740)
-        httpretty.reset()
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
 
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53231212',
-            body=fx_non_ugoira_body,
-        )
+        assert is_ugoira(53239740)
+
+    test()
+
+
+def test_is_ugoira_false(fx_non_ugoira_body):
+    """Test :func:`ugoira.lib.ugoira`.
+
+    Result is :const:`False`.
+
+    """
+
+    @responses.activate
+    def test():
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53231212',
+            'body': fx_non_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+
         assert not is_ugoira(53231212)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_download_zip_fail_head(fx_ugoira_body):
     """Test :func:`ugoira.lib.download_zip` with broken link.
 
     It must raise :class:`ugoira.lib.PixivError`.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53239740',
-            body=fx_ugoira_body,
-        )
-        httpretty.register_uri(
-            httpretty.HEAD,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            status=403,
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+        responses.add(**{
+            'method': responses.HEAD,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 403,
+        })
 
         with pytest.raises(PixivError):
             download_zip(53239740)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_download_zip_fail_get(fx_ugoira_body):
     """Test :func:`ugoira.lib.download_zip` with broken link.
 
     It must raise :class:`ugoira.lib.PixivError`.
+
     """
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53239740',
-            body=fx_ugoira_body,
-        )
-        httpretty.register_uri(
-            httpretty.HEAD,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            status=200,
-        )
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            status=403,
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+        responses.add(**{
+            'method': responses.HEAD,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 403,
+        })
 
         with pytest.raises(PixivError):
             download_zip(53239740)
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_download_zip_success(fx_ugoira_body, fx_ugoira_zip):
     """Test :func:`ugoira.lib.download_zip` with correct link."""
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53239740',
-            body=fx_ugoira_body,
-        )
-        httpretty.register_uri(
-            httpretty.HEAD,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            status=200,
-        )
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            body=fx_ugoira_zip,
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+        responses.add(**{
+            'method': responses.HEAD,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'body': fx_ugoira_zip,
+            'content_type': 'application/zip',
+            'status': 200,
+        })
+
         data, frames = download_zip(53239740)
         assert data == fx_ugoira_zip
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_make_gif(monkeypatch,
@@ -326,28 +355,33 @@ def test_make_gif(monkeypatch,
         yield str(fx_tmpdir)
     monkeypatch.setattr('tempfile.TemporaryDirectory', fake)
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53239740',
-            body=fx_ugoira_body,
-        )
-        httpretty.register_uri(
-            httpretty.HEAD,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            status=200,
-        )
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            body=fx_ugoira_zip,
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+        responses.add(**{
+            'method': responses.HEAD,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'body': fx_ugoira_zip,
+            'content_type': 'application/zip',
+            'status': 200,
+        })
+
         data, frames = download_zip(53239740)
         file = fx_tmpdir / 'test.gif'
         make_gif(str(file), data, fx_ugoira_frames)
@@ -358,12 +392,7 @@ def test_make_gif(monkeypatch,
             assert img.sequence[1].delay == 200
             assert img.sequence[2].delay == 300
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
 
 
 def test_save_zip(monkeypatch,
@@ -378,28 +407,33 @@ def test_save_zip(monkeypatch,
         yield str(fx_tmpdir)
     monkeypatch.setattr('tempfile.TemporaryDirectory', fake)
 
-    import httpretty
-
-    @httpretty.activate
+    @responses.activate
     def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/member_illust.php'
-            '?mode=medium&illust_id=53239740',
-            body=fx_ugoira_body,
-        )
-        httpretty.register_uri(
-            httpretty.HEAD,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            status=200,
-        )
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://i1.pixiv.net/img-zip-ugoira/img/'
-            '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
-            body=fx_ugoira_zip,
-        )
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+        responses.add(**{
+            'method': responses.HEAD,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'body': fx_ugoira_zip,
+            'content_type': 'application/zip',
+            'status': 200,
+        })
+
         data, frames = download_zip(53239740)
         file = fx_tmpdir / 'test.zip'
 
@@ -412,9 +446,4 @@ def test_save_zip(monkeypatch,
             for filename in fx_ugoira_frames.keys():
                 assert filename in namelist
 
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
+    test()
