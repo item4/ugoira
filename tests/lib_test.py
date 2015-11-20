@@ -14,7 +14,35 @@ def test_login_valid(fx_valid_id_pw):
 
     """
 
-    assert login(*fx_valid_id_pw)
+    import httpretty
+
+    @httpretty.activate
+    def test():
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://www.pixiv.net/',
+            body='Just touch, Do not access it really. Because they block us.',
+        )
+        httpretty.register_uri(
+            httpretty.POST,
+            'https://www.secure.pixiv.net/login.php',
+            status=301,
+            forcing_headers={'Location': 'http://www.pixiv.net/'},
+        )
+        httpretty.register_uri(
+            httpretty.POST,
+            'http://www.pixiv.net/',
+            body='login',
+        )
+
+        assert login(*fx_valid_id_pw)
+
+    try:
+        test()
+    finally:
+        httpretty.disable()
+        httpretty.reset()
+        del httpretty
 
 
 def test_login_pw_is_too_short(fx_too_short_id_pw):
@@ -69,6 +97,43 @@ def test_login_pw_is_too_long(fx_too_long_id_pw):
         del httpretty
 
 
+def test_login_invalid(fx_invalid_id_pw):
+    """Test :func:`ugoira.lib.login` with invalid id/pw pair.
+
+    It must raise :class:`ugoira.lib.PixivError`.
+    """
+
+    import httpretty
+
+    @httpretty.activate
+    def test():
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://www.pixiv.net/',
+            body='Just touch, Do not access it really. Because they block us.',
+        )
+        httpretty.register_uri(
+            httpretty.POST,
+            'https://www.secure.pixiv.net/login.php',
+            status=301,
+            location='https://example.com/',
+        )
+        httpretty.register_uri(
+            httpretty.POST,
+            'https://example.com/',
+            body='fail',
+        )
+
+        assert not login(*fx_invalid_id_pw)
+
+    try:
+        test()
+    finally:
+        httpretty.disable()
+        httpretty.reset()
+        del httpretty
+
+
 def test_login_too_many_fail(fx_invalid_id_pw):
     """Test :func:`ugoira.lib.login` with too many fail before.
 
@@ -95,32 +160,6 @@ def test_login_too_many_fail(fx_invalid_id_pw):
 
         with pytest.raises(PixivError):
             login(*fx_invalid_id_pw)
-
-    try:
-        test()
-    finally:
-        httpretty.disable()
-        httpretty.reset()
-        del httpretty
-
-
-def test_login_invalid(fx_invalid_id_pw):
-    """Test :func:`ugoira.lib.login` with invalid id/pw pair.
-
-    It must raise :class:`ugoira.lib.PixivError`.
-    """
-
-    import httpretty
-
-    @httpretty.activate
-    def test():
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://www.pixiv.net/',
-            body='Just touch, Do not access it really. Because they block us.',
-        )
-
-        assert not login(*fx_invalid_id_pw)
 
     try:
         test()

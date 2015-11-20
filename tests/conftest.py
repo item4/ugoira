@@ -21,22 +21,11 @@ def fx_tmpdir(tmpdir):
 
 
 @fixture
-def fx_valid_id_pw(request):
-    """Pixiv ID/PW pair tester given."""
+def fx_valid_id_pw():
+    """Pixiv ID/PW pair fake."""
 
-    try:
-        id = request.config.getoption('--pixiv-id')
-    except ValueError:
-        skip('This test must need --pixiv-id.')
-    if id is None:
-        skip('This test must need --pixiv-id.')
-
-    try:
-        password = request.config.getoption('--pixiv-password')
-    except ValueError:
-        skip('This test must need --pixiv-password.')
-    if password is None:
-        skip('This test must need --pixiv-password.')
+    id = 'item4'
+    password = 'supersecret'
 
     return id, password
 
