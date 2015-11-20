@@ -120,19 +120,3 @@ def fx_ugoira_frames():
         '000001.jpg': 2000,
         '000002.jpg': 3000,
     }
-
-
-@yield_fixture(scope='function')
-def fx_httpretty():
-    """Replacement of :func:`httpretty.activate`.
-
-    Because I can not sure it support :mod:`pytest`. :(
-
-    """
-
-    import httpretty
-    httpretty.reset()
-    httpretty.enable()
-    yield httpretty
-    httpretty.disable()
-    httpretty.reset()
