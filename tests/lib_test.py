@@ -35,17 +35,6 @@ def test_login_valid(fx_valid_id_pw):
                 'Location': 'http://www.pixiv.net/'
             },
         })
-        # Responses is so fool. It try old mapping. So We needs some trick :(
-        responses.add(**{
-            'method': responses.POST,
-            'url': 'http://example.com',
-            'body': '????',
-            'content_type': 'text/html; charset=utf-8',
-            'status': 301,
-            'adding_headers': {
-                'Location': 'http://www.pixiv.net/'
-            },
-        })
 
         assert login(*fx_valid_id_pw)
 
@@ -126,27 +115,16 @@ def test_login_invalid(fx_invalid_id_pw):
             'content_type': 'text/html; charset=utf-8',
             'status': 301,
             'adding_headers': {
-                'Location': 'http://example1.com/'
+                'Location': 'http://example.com/'
             },
         })
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://example1.com/',
+            'url': 'http://example.com/',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
-        })
-        # Responses is so fool. It try old mapping. So We needs some trick :(
-        responses.add(**{
-            'method': responses.POST,
-            'url': 'http://www.pixiv.net/',
-            'body': '????',
-            'content_type': 'text/html; charset=utf-8',
-            'status': 301,
-            'adding_headers': {
-                'Location': 'http://example1.com/'
-            },
         })
 
         assert not login(*fx_invalid_id_pw)

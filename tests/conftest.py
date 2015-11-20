@@ -2,7 +2,8 @@ import os
 import pathlib
 import zipfile
 
-from pytest import fixture, skip
+from pytest import fixture
+from ugoira.lib import pixiv
 from wand.color import Color
 from wand.image import Image
 
@@ -102,3 +103,9 @@ def fx_ugoira_frames():
         '000001.jpg': 2000,
         '000002.jpg': 3000,
     }
+
+
+@fixture(autouse=True)
+def fx_clear_cache():
+    """Clear redirect cache for tests."""
+    pixiv.redirect_cache.clear()
