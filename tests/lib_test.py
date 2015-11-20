@@ -113,6 +113,7 @@ def test_login_invalid(fx_invalid_id_pw):
             'http://www.pixiv.net/',
             body='Just touch, Do not access it really. Because they block us.',
         )
+
         assert not login(*fx_invalid_id_pw)
 
     try:
