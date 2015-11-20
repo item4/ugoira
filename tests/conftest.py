@@ -2,8 +2,7 @@ import os
 import pathlib
 import zipfile
 
-from click.testing import CliRunner
-from pytest import fixture, skip, yield_fixture
+from pytest import fixture, skip
 from wand.color import Color
 from wand.image import Image
 
@@ -60,12 +59,6 @@ def fx_too_long_id_pw():
 def fx_invalid_id_pw():
     """Invalid ID/PW pair case."""
     return 'invalid_id', 'invalid_pw'
-
-
-@fixture
-def fx_clirunner():
-    """:mod:`click` CLI test Runner"""
-    return CliRunner()
 
 
 @fixture
