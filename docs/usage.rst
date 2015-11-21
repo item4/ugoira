@@ -4,7 +4,7 @@ Usage
 Understanding about ``illust-id``
 ---------------------------------
 
-ugoira needs ``illust-id`` for download target.
+:program:`ugoira` needs ``illust-id`` for download target.
 
 First, Open pixiv page what you want to download. Then you can see the url at
 url bar of browser like this.
