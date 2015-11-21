@@ -35,16 +35,16 @@ If you can not find where is the file exists, type this.
    $ pwd
 
 
-Image animation Speed-Up
-++++++++++++++++++++++++
+Image animation accelerate
+++++++++++++++++++++++++++
 
-You can change animation speed with ``--div-by`` option.
+You can accelerate animation speed with ``--acceleration`` option.
 
-For example, if you want to increase speed by 10x, type it.
+For example, if you want to acceleration speed by 10x, type it.
 
 .. sourcecode:: console
 
-   $ ugoira --div-by 10 44525295 toramaru.gif
+   $ ugoira --acceleration 10 44525295 toramaru.gif
 
 
 Limitation of GIF

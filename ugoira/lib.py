@@ -128,7 +128,7 @@ def download_zip(illust_id: int):
     return res.content, frames
 
 
-def make_gif(filename: str, file_data: bytes, frames: dict, div_by=1):
+def make_gif(filename: str, file_data: bytes, frames: dict, acceleration=1.0):
     """Make GIF file from given file data and frame data.
 
     :param filename: filename of dest
@@ -137,8 +137,8 @@ def make_gif(filename: str, file_data: bytes, frames: dict, div_by=1):
     :type file_data: :class:`bytes`
     :param frames: dict of each frames delay by frame filename
     :type frames: :class:`dict`
-    :param div_by: speed control
-    :type div_by: :class:`int`
+    :param acceleration: speed acceleration control
+    :type acceleration: :class:`float`
 
     """
 
@@ -165,7 +165,7 @@ def make_gif(filename: str, file_data: bytes, frames: dict, div_by=1):
                                 gif.sequence.append(part)
                                 with gif.sequence[-1]:
                                     gif.sequence[-1].delay = \
-                                        frames[file]//10//div_by
+                                        int(frames[file]//10//acceleration)
 
                     gif.save(filename=filename)
 

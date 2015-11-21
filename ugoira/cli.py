@@ -16,13 +16,16 @@ __all__ = 'ugoira',
 @command()
 @option('--id', prompt='Your Pixiv ID', help='Pixiv ID')
 @option('--password', prompt=True, hide_input=True, help='Pixiv Password')
-@option('--div-by', type=int, default=1, help='You can divide interval between'
-                                              ' images by using this option.'
-                                              ' Default value is 1'
-                                              ' (normal speed)')
+@option('--acceleration', type=float, default=1.0,
+        help='You can accelerate interval between images by using this option.'
+             ' Default value is 1.0 (default speed)')
 @argument('illust-id', type=int)
 @argument('dest', type=Path())
-def ugoira(id: str, password: str, div_by: int, illust_id: int, dest: str):
+def ugoira(id: str,
+           password: str,
+           acceleration: float,
+           illust_id: int,
+           dest: str):
     """ugoira command for download Pixiv Ugokuillust."""
 
     try:
@@ -43,7 +46,7 @@ def ugoira(id: str, password: str, div_by: int, illust_id: int, dest: str):
             if not dest.endswith('.gif'):
                 dest += '.gif'
 
-            make_gif(dest, blob, frames, div_by)
+            make_gif(dest, blob, frames, acceleration)
             echo('download completed at {} as gif'.format(dest))
     else:
         echo('Given illust-id is not ugoira.', err=True)
