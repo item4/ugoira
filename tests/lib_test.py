@@ -8,10 +8,63 @@ from ugoira.lib import (PixivError, download_zip, is_ugoira, login, make_gif,
 from wand.image import Image
 
 
-def test_login_valid(fx_valid_id_pw):
-    """Test :func:`ugoira.lib.login` successfully.
+def test_login_miss_id():
+    """Test :func:`ugoira.lib.login` try, but missing id and raise
+    :exception:`ugoira.lib.PixivError`.
 
     """
+
+    id = None
+    password = None
+    with pytest.raises(PixivError):
+        login(id, password)
+
+    password = 'password'
+    with pytest.raises(PixivError):
+        login(id, password)
+
+
+def test_login_miss_password():
+    """Test :func:`ugoira.lib.login` try, but missing password and raise
+    :exception:`ugoira.lib.PixivError`.
+
+    """
+
+    id = None
+    password = None
+    with pytest.raises(PixivError):
+        login(id, password)
+
+    id = 'item4'
+    with pytest.raises(PixivError):
+        login(id, password)
+
+
+def test_login_pixiv_down(fx_valid_id_pw):
+    """Test :func:`ugoira.lib.login` try, but pixiv down and raise
+    :exception:`ugoira.lib.PixivError`.
+
+    """
+
+    @responses.activate
+    def test():
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'DEAD',
+            'content_type': 'text/html; charset=utf-8',
+            'status': 404,
+        })
+
+        with pytest.raises(PixivError):
+            login(*fx_valid_id_pw)
+
+    test()
+
+
+def test_login_valid(fx_valid_id_pw):
+    """Test :func:`ugoira.lib.login` successfully."""
 
     @responses.activate
     def test():
