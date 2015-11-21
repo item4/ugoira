@@ -51,6 +51,7 @@ def login(id, password):
     :type password: :class:`str`
     :return: Login success or not.
     :rtype: :class:`bool`
+    :raise PixivError: If login info is invalid or fail to login.
 
     """
 
@@ -111,6 +112,7 @@ def download_zip(illust_id: int):
     :type illust_id: :class:`int`
     :return: zip file bytes(:class:`bytes`) and frame data(:class:`dict`)
     :rtype: :class:`tuple`
+    :raise PixivError: If fail to access to image file.
 
     """
 
