@@ -3,6 +3,7 @@ import zipfile
 
 import pytest
 import responses
+from requests.exceptions import ConnectionError
 from ugoira.lib import (PixivError, download_zip, is_ugoira, login, make_gif,
                         save_zip)
 from wand.image import Image
@@ -52,9 +53,87 @@ def test_login_pixiv_down(fx_valid_id_pw):
         responses.add(**{
             'method': responses.GET,
             'url': 'http://www.pixiv.net/',
-            'body': 'DEAD',
+            'body': 'dead',
+            'status': 404,
+        })
+
+        with pytest.raises(PixivError):
+            login(*fx_valid_id_pw)
+
+    test()
+
+
+def test_login_pixiv_login_server_down(fx_valid_id_pw):
+    """Test :func:`ugoira.lib.login` try, but pixiv login server down and
+    raise :exception:`ugoira.lib.PixivError`.
+
+    """
+
+    @responses.activate
+    def test():
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'pass',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': 'dead',
             'content_type': 'text/html; charset=utf-8',
             'status': 404,
+        })
+
+        with pytest.raises(PixivError):
+            login(*fx_valid_id_pw)
+
+    test()
+
+
+def test_login_pixiv_error(fx_valid_id_pw):
+    """Test :func:`ugoira.lib.login` try, but pixiv error and raise
+    :exception:`ugoira.lib.PixivError`.
+
+    """
+
+    @responses.activate
+    def test():
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': ConnectionError('dead'),
+            'status': 500,
+        })
+
+        with pytest.raises(PixivError):
+            login(*fx_valid_id_pw)
+
+    test()
+
+
+def test_login_pixiv_login_server_error(fx_valid_id_pw):
+    """Test :func:`ugoira.lib.login` try, but pixiv login server error and
+    raise :exception:`ugoira.lib.PixivError`.
+
+    """
+
+    @responses.activate
+    def test():
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/',
+            'body': 'pass',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.POST,
+            'url': 'https://www.secure.pixiv.net/login.php',
+            'body': ConnectionError('dead'),
+            'status': 500,
         })
 
         with pytest.raises(PixivError):

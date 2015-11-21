@@ -64,11 +64,15 @@ def login(id, password):
 
     try:
         # Must Need First page touch
-        pixiv.get(pixiv_url['index'])
+        rv = pixiv.get(pixiv_url['index'])
     except ConnectionError as e:
         raise PixivError('Error occured at login process. '
                          'Please report this error with this info:'
                          ' GET + ' + str(e))
+
+    if rv.status_code != 200:
+        raise PixivError('Pixiv server was down!')
+
     try:
         rv = pixiv.post(pixiv_url['login'], data={
             'mode': 'login',
@@ -80,6 +84,9 @@ def login(id, password):
         raise PixivError('Error occured at login process. '
                          'Please report this error with this info:'
                          ' POST + ' + str(e))
+
+    if rv.status_code != 200:
+        raise PixivError('Pixiv login server was down!')
 
     if '誤入力が続いたため、アカウントのロックを行いました。しばらく経ってからログインをお試しください。' \
             in rv.text:
