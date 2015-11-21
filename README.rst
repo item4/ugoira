@@ -1,11 +1,14 @@
 Ugoira
 ======
 
-Ugoira is download tool for Pixiv Ugoira(Ugoku Illustration/Moving Illustration)
+Ugoira is download tool for Pixiv Ugoira.
+Pixiv Ugoira is **Ugoku** (Animated) Illustration.
+
+If you need more detail information, See the docs.
 
 
-Installation
-------------
+Simple Installation
+-------------------
 
 1. Clone it
 
@@ -22,7 +25,7 @@ Installation
 
    .. code-block:: console
 
-      $ pip install -e .
+      $ pip install ugoira
 
 
 Usage
