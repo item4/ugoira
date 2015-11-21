@@ -373,6 +373,58 @@ def test_make_gif(monkeypatch,
     test()
 
 
+def test_make_gif_with_acceleration(monkeypatch,
+                                    fx_tmpdir,
+                                    fx_ugoira_body,
+                                    fx_ugoira_zip,
+                                    fx_ugoira_frames):
+    """Test :func:`ugoira.lib.make_gif` with correct link and acceleration."""
+
+    @contextlib.contextmanager
+    def fake():
+        yield str(fx_tmpdir)
+    monkeypatch.setattr('tempfile.TemporaryDirectory', fake)
+
+    @responses.activate
+    def test():
+        responses.reset()
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://www.pixiv.net/member_illust.php'
+                   '?mode=medium&illust_id=53239740',
+            'body': fx_ugoira_body,
+            'content_type': 'text/html; charset=utf-8',
+            'status': 200,
+            'match_querystring': True,
+        })
+        responses.add(**{
+            'method': responses.HEAD,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'status': 200,
+        })
+        responses.add(**{
+            'method': responses.GET,
+            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
+                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'body': fx_ugoira_zip,
+            'content_type': 'application/zip',
+            'status': 200,
+        })
+
+        data, frames = download_zip(53239740)
+        file = fx_tmpdir / 'test.gif'
+        make_gif(str(file), data, fx_ugoira_frames, 10.0)
+        with Image(filename=str(file)) as img:
+            assert img.format == 'GIF'
+            assert len(img.sequence) == 3
+            assert img.sequence[0].delay == 10
+            assert img.sequence[1].delay == 20
+            assert img.sequence[2].delay == 30
+
+    test()
+
+
 def test_save_zip(monkeypatch,
                   fx_tmpdir,
                   fx_ugoira_body,
