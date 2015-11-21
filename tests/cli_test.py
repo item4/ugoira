@@ -98,7 +98,7 @@ def test_invalid_password(fx_invalid_id_pw):
     test()
 
 
-def test_too_many_login_tried(monkeypatch, fx_invalid_id_pw):
+def test_too_many_login_tried(fx_valid_id_pw):
     """Test for command with invalid id/pw pair.
 
     It must will be fail.
@@ -125,7 +125,7 @@ def test_too_many_login_tried(monkeypatch, fx_invalid_id_pw):
             'status': 200,
         })
 
-        id, pw = fx_invalid_id_pw
+        id, pw = fx_valid_id_pw
         runner = CliRunner()
         result = runner.invoke(
             ugoira,
