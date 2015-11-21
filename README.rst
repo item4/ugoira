@@ -44,3 +44,9 @@ You must install Tests Requirements.
 .. code-block:: console
 
    $ pip install -e .[tests]
+
+
+License
+-------
+
+MIT
