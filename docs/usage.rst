@@ -2,7 +2,7 @@ Usage
 =====
 
 Understanding about ``illust-id``
---------------------------------
+---------------------------------
 
 ugoira needs ``illust-id`` for download target.
 
