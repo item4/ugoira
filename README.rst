@@ -1,11 +1,15 @@
 Ugoira
 ======
 
+.. image:: https://readthedocs.org/projects/ugoira/badge/?version=latest
+   :target: http://ugoira.readthedocs.org/
+
 Ugoira is download tool for Pixiv Ugoira.
 Pixiv Ugoira is **Ugoku** (Animated) Illustration.
 
-If you need more detail information, See the docs.
+If you need more detail information, `See the docs for details`__.
 
+__ http://ugoira.readthedocs.org/en/latest/
 
 Simple Installation
 -------------------
