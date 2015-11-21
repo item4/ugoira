@@ -1,0 +1,3 @@
+
+.. automodule:: ugoira.lib
+   :members:
