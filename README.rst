@@ -17,6 +17,7 @@ If you need more detail information, `See the docs for details`__.
 
 __ http://ugoira.readthedocs.org/en/latest/
 
+
 Simple Installation
 -------------------
 
@@ -45,7 +46,7 @@ Usage
 
 .. code-block:: console
 
-   $ ugoira image-id filename.gif
+   $ ugoira illust-id filename.gif
 
 
 For Developer
