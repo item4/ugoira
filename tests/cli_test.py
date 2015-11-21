@@ -37,8 +37,6 @@ def test_too_long_password(fx_too_long_id_pw):
         'Password is too long! Must be shorter than 32.'
 
 
-
-
 def test_invalid_password(fx_invalid_id_pw):
     """Test for command with invalid id/pw pair.
 
