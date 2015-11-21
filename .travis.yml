@@ -1,0 +1,19 @@
+language: python
+python:
+- 3.5
+before_install:
+- sudo apt-get update
+install:
+- sudo apt-get install libmagickwand-dev
+- pip install -e .[tests]
+- pip install pytest-cov coveralls
+script:
+- py.test -v --cov ugoira
+after_success:
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && coveralls || false'
+notifications:
+  irc:
+    channels:
+    - "irc.ozinger.org#item4"
+    on_success: change
+    on_failure: always

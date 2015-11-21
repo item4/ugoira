@@ -4,6 +4,12 @@ Ugoira
 .. image:: https://readthedocs.org/projects/ugoira/badge/?version=latest
    :target: http://ugoira.readthedocs.org/
 
+.. image:: https://travis-ci.org/item4/ugoira.svg?branch=master
+   :target: https://travis-ci.org/item4/ugoira
+
+.. image:: https://img.shields.io/coveralls/item4/ugoira.svg?
+   :target: https://coveralls.io/r/item4/ugoira
+
 Ugoira is download tool for Pixiv Ugoira.
 Pixiv Ugoira is **Ugoku** (Animated) Illustration.
 
@@ -23,7 +29,9 @@ Simple Installation
 
 2. Install Imagemagick
 
-   I use Wand. It need Imagemagick. Please see http://docs.wand-py.org/en/0.4.1/guide/install.html
+   I use Wand. It need Imagemagick. Please see `Wand install guide`__
+
+__ http://docs.wand-py.org/en/0.4.1/guide/install.html
 
 3. Install
 
