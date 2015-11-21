@@ -15,6 +15,9 @@ from requests import Session
 from requests.exceptions import ConnectionError
 from wand.image import Image
 
+__all__ = ('PixivError', 'download_zip', 'is_ugoira', 'login', 'make_gif',
+          'pixiv', 'pixiv_url', 'save_zip', 'ugoira_data_regex', 'user_agent')
+
 #: (:class:`str`) User-Agent for fake
 user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:34.0)' + \
              ' Gecko/20100101 Firefox/34.0'
