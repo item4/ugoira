@@ -1,7 +1,42 @@
 """:mod:`ugoira.cli` --- Ugoira Download Command Line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Ugoira Download Command Line
+This provide ugoira download command line executable :program:`ugoira`:
+
+.. sourcecode:: console
+
+   $ ugoira
+   Usage: ugoira [OPTIONS] ILLUST_ID DEST
+
+.. describe:: ILLUST_ID
+
+   ``illust-id`` of your wants to download.
+   It can get from Pixiv image url. see ``illust-id`` parameter in url.
+
+.. describe:: DEST
+
+   The saving path of generated file by work.
+   If DEST's suffix is ``.zip``, ugoira generate ZIP file.
+   If DEST's suffix is ``.gif`` or not match any cases, ugoira generate
+   GIF image.
+
+There are options as well:
+
+.. option:: --id <id>
+
+   Your Pixiv Account ID. It needs by Pixiv access.
+   If you omit this option, ugoira show prompt to input ID.
+
+.. option:: --password <password>
+
+   Your Pixiv Account Password. It needs by Pixiv access.
+   If you omit this option, ugoira show prompt to input Password.
+
+.. option:: --acceleration <speed>
+
+   You can accelerate GIF speed using this option.
+   For example, if you given it 10, GIF fasten 10x.
+   Default is :const:`1.0`.
 
 """
 
