@@ -25,12 +25,44 @@ There are options as well:
 .. option:: --id <id>
 
    Your Pixiv Account ID. It needs by Pixiv access.
-   If you omit this option, ugoira show prompt to input ID.
+
+   You can omit this option by export environment variable.
+
+   In Linux/Mac
+
+   .. sourcecode:: console
+
+      $ export PIXIV_ID='item4'
+
+   In Windows
+
+   .. sourcecode:: console
+
+      $ set PIXIV_ID='item4'
+
+   If you omit this option without environment variable, ugoira show prompt to
+   input ID.
 
 .. option:: --password <password>
 
    Your Pixiv Account Password. It needs by Pixiv access.
-   If you omit this option, ugoira show prompt to input Password.
+
+   You can omit this option by export environment variable.
+
+   In Linux/Mac
+
+   .. sourcecode:: console
+
+      $ export PIXIV_PASSWORD='supersecret'
+
+   In Windows
+
+   .. sourcecode:: console
+
+      $ set PIXIV_PASSWORD='supersecret'
+
+   If you omit this option without environment variable, ugoira show prompt to
+   input Password.
 
 .. option:: --acceleration <speed>
 
@@ -49,8 +81,9 @@ __all__ = 'ugoira',
 
 
 @command()
-@option('--id', prompt='Your Pixiv ID', help='Pixiv ID')
-@option('--password', prompt=True, hide_input=True, help='Pixiv Password')
+@option('--id', prompt='Your Pixiv ID', help='Pixiv ID', envvar='PIXIV_ID')
+@option('--password', prompt=True, hide_input=True, help='Pixiv Password',
+        envvar='PIXIV_PASSWORD')
 @option('--acceleration', type=float, default=1.0,
         help='You can accelerate interval between images by using this option.'
              ' Default value is 1.0 (default speed)')
