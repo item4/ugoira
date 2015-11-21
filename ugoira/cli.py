@@ -1,4 +1,4 @@
-""":mod:`ugoira.lib` --- Ugoira Download Command Line
+""":mod:`ugoira.cli` --- Ugoira Download Command Line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ugoira Download Command Line
