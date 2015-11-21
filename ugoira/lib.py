@@ -90,37 +90,37 @@ class PixivError(Exception):
     """Error with Pixiv"""
 
 
-def is_ugoira(image_id: int):
+def is_ugoira(illust_id: int):
     """Check this image type.
 
-    :param image_id: Pixiv image_id
-    :type image_id: :class:`int`
+    :param illust_id: Pixiv illust_id
+    :type illust_id: :class:`int`
     :return: Which is ugoira or not.
     :rtype: :class:`bool`
 
     """
 
-    res = pixiv.get(pixiv_url['image-main'].format(image_id))
+    res = pixiv.get(pixiv_url['image-main'].format(illust_id))
     return '_ugoku-illust-player-container' in res.text
 
 
-def download_zip(image_id: int):
+def download_zip(illust_id: int):
     """Download ugoira zip archive.
 
-    :param image_id: Pixiv image_id
-    :type image_id: :class:`int`
+    :param illust_id: Pixiv illust_id
+    :type illust_id: :class:`int`
     :return: zip file bytes(:class:`bytes`) and frame data(:class:`dict`)
     :rtype: :class:`tuple`
 
     """
 
-    image_main_url = pixiv_url['image-main'].format(image_id)
+    image_main_url = pixiv_url['image-main'].format(illust_id)
     res = pixiv.get(image_main_url)
     data = json.loads(ugoira_data_regex.search(res.text).group(1))
     pixiv.headers['Referer'] = image_main_url
     res = pixiv.head(data['src'])
     if res.status_code != 200:
-        raise PixivError('Wrong image src. Please report it with image-id')
+        raise PixivError('Wrong image src. Please report it with illust-id')
     res = pixiv.get(data['src'])
     if res.status_code != 200:
         raise PixivError('Can not download image zip')

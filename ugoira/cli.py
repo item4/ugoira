@@ -20,9 +20,9 @@ __all__ = 'ugoira',
                                               ' images by using this option.'
                                               ' Default value is 1'
                                               ' (normal speed)')
-@argument('image-id', type=int)
+@argument('illust-id', type=int)
 @argument('dest', type=Path())
-def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
+def ugoira(id: str, password: str, div_by: int, illust_id: int, dest: str):
     """ugoira command for download Pixiv Ugokuillust."""
 
     try:
@@ -34,8 +34,8 @@ def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
     except PixivError as e:
         echo(e, err=True)
         raise SystemExit(1)
-    if is_ugoira(image_id):
-        blob, frames = download_zip(image_id)
+    if is_ugoira(illust_id):
+        blob, frames = download_zip(illust_id)
         if dest.endswith('.zip'):
             save_zip(dest, blob)
             echo('download completed at {} as zip'.format(dest))
@@ -46,5 +46,5 @@ def ugoira(id: str, password: str, div_by: int, image_id: int, dest: str):
             make_gif(dest, blob, frames, div_by)
             echo('download completed at {} as gif'.format(dest))
     else:
-        echo('Given image id is not ugoira.', err=True)
+        echo('Given illust-id is not ugoira.', err=True)
         raise SystemExit(1)

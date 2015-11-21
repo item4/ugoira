@@ -1,19 +1,19 @@
 Usage
 =====
 
-Understanding about ``image-id``
+Understanding about ``illust-id``
 --------------------------------
 
-ugoira needs ``image-id`` for download target.
+ugoira needs ``illust-id`` for download target.
 
 First, Open pixiv page what you want to download. Then you can see the url at
 url bar of browser like this.
 
 ``http://www.pixiv.net/member_illust.php?mode=medium&illust_id=44522595``
 
-Look at the number after ``illust_id=``, ``44525295`` is ``image-id``!
+Look at the number after ``illust_id=``, ``44525295`` is ``illust-id``!
 
-``image-id`` must be integer, must not include other character such as ``&``,
+``illust-id`` must be integer, must not include other character such as ``&``,
 english alphabets.
 
 
