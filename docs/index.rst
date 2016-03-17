@@ -24,6 +24,15 @@ API
    ugoira
 
 
+Changelog
+---------
+
+.. toctree::
+   :maxdepth: 2
+
+   changelog
+
+
 Indices and tables
 ------------------
 

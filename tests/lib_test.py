@@ -80,7 +80,7 @@ def test_login_pixiv_login_server_down(fx_valid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'dead',
             'content_type': 'text/html; charset=utf-8',
             'status': 404,
@@ -131,7 +131,7 @@ def test_login_pixiv_login_server_error(fx_valid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': ConnectionError('dead'),
             'status': 500,
         })
@@ -158,7 +158,7 @@ def test_login_valid(fx_valid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
@@ -241,7 +241,7 @@ def test_login_invalid(fx_invalid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
@@ -284,7 +284,7 @@ def test_login_too_many_fail(fx_invalid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': '誤入力が続いたため、アカウントのロックを行いました。'
                     'しばらく経ってからログインをお試しください。',
             'content_type': 'text/html; charset=utf-8',

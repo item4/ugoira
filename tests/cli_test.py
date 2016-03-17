@@ -57,7 +57,7 @@ def test_invalid_password(fx_invalid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
@@ -118,7 +118,7 @@ def test_too_many_login_tried(fx_valid_id_pw):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': '誤入力が続いたため、アカウントのロックを行いました。'
                     'しばらく経ってからログインをお試しください。',
             'content_type': 'text/html; charset=utf-8',
@@ -157,7 +157,7 @@ def test_download_gif(fx_tmpdir,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
@@ -220,7 +220,7 @@ def test_is_not_ugoira(fx_valid_id_pw, fx_non_ugoira_body):
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
@@ -271,7 +271,7 @@ def test_download_zip(fx_tmpdir,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',
@@ -337,7 +337,7 @@ def test_download_without_suffix(fx_tmpdir,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.secure.pixiv.net/login.php',
+            'url': 'https://www.pixiv.net/login.php',
             'body': 'Just touch, Do not access it really.'
                     ' Because they block us.',
             'content_type': 'text/html; charset=utf-8',

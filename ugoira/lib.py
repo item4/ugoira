@@ -25,7 +25,7 @@ user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:34.0)' + \
 #: (:class:`dict`) URLs needed by API
 pixiv_url = {
     'index': 'http://www.pixiv.net/',
-    'login': 'https://www.secure.pixiv.net/login.php',
+    'login': 'https://www.pixiv.net/login.php',
     'image-main': ('http://www.pixiv.net/member_illust.php'
                    '?mode=medium&illust_id={}'),
 }
@@ -76,6 +76,7 @@ def login(id, password):
     try:
         rv = pixiv.post(pixiv_url['login'], data={
             'mode': 'login',
+            'return_to': '/',
             'pixiv_id': id,
             'pass': password,
             'skip': '1'
