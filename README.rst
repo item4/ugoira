@@ -21,20 +21,13 @@ __ http://ugoira.readthedocs.org/en/latest/
 Simple Installation
 -------------------
 
-1. Clone it
-
-   .. code-block:: console
-
-      $ git clone https://github.com/item4/snoin.com.git
-
-
-2. Install Imagemagick
+1. Install Imagemagick
 
    I use Wand. It need Imagemagick. Please see `Wand install guide`__
 
-__ http://docs.wand-py.org/en/0.4.1/guide/install.html
+   __ http://docs.wand-py.org/en/0.4.1/guide/install.html
 
-3. Install
+2. Install
 
    .. code-block:: console
 

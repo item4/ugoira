@@ -6,7 +6,7 @@ This guideline introduce how to install ugoira.
 Prerequisites
 -------------
 
-Cliche is made with the following softwares:
+Ugoira is made with the following softwares:
 
 Python_ 3.3 or higher
    ugoira is mostly written in Python language.  It's a high-level scripting
