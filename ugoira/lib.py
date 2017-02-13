@@ -59,8 +59,8 @@ def login(id, password):
         raise PixivError('ID and Password must be needed.')
     if len(password) < 6:
         raise PixivError('Password is too short! Must be longer than 6.')
-    if len(password) > 32:
-        raise PixivError('Password is too long! Must be shorter than 32.')
+    if len(password) > 72:
+        raise PixivError('Password is too long! Must be shorter than 72.')
 
     try:
         # Must Need First page touch

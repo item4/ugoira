@@ -34,7 +34,7 @@ def test_too_long_password(fx_too_long_id_pw):
     )
     assert result.exit_code == 1
     assert result.output.strip() == \
-        'Password is too long! Must be shorter than 32.'
+        'Password is too long! Must be shorter than 72.'
 
 
 def test_invalid_password(fx_invalid_id_pw):
