@@ -97,11 +97,7 @@ def ugoira(id: str,
     """ugoira command for download Pixiv Ugokuillust."""
 
     try:
-        if login(id, password):
-            pass
-        else:
-            echo('Login failed.', err=True)
-            raise SystemExit(1)
+        login(id, password)
     except PixivError as e:
         echo(e, err=True)
         raise SystemExit(1)

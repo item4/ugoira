@@ -24,8 +24,9 @@ user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:34.0)' + \
 
 #: (:class:`dict`) URLs needed by API
 pixiv_url = {
-    'index': 'http://www.pixiv.net/',
-    'login': 'https://www.pixiv.net/login.php',
+    'login-page': ('https://accounts.pixiv.net/login?lang=en&source=pc'
+                   '&view_type=page&ref=wwwtop_accounts_index'),
+    'login-api': 'https://accounts.pixiv.net/api/login?lang=en',
     'image-main': ('http://www.pixiv.net/member_illust.php'
                    '?mode=medium&illust_id={}'),
 }
@@ -35,12 +36,16 @@ pixiv = Session()
 pixiv.headers['User-Agent'] = user_agent
 
 
+#: (:class:`re.regex`) regular expression for grep login field data
+login_field_regex = re.compile(
+    '<input type="hidden" id="init-config" class="json-data" value=\'(.+)\'>'
+)
+
 #: (:class:`re.regex`) regular expression for grep ugoira data
 ugoira_data_regex = re.compile(
     r'pixiv\.context\.ugokuIllustData\s*=\s*'
     '(\{"src":".+?","mime_type":".+?","frames":\[.+?\]\})'
 )
-
 
 def login(id, password):
     """Loigin into Pixiv
@@ -49,8 +54,6 @@ def login(id, password):
     :type id: :class:`str`
     :param password: Pixiv password
     :type password: :class:`str`
-    :return: Login success or not.
-    :rtype: :class:`bool`
     :raise PixivError: If login info is invalid or fail to login.
 
     """
@@ -63,36 +66,48 @@ def login(id, password):
         raise PixivError('Password is too long! Must be shorter than 72.')
 
     try:
-        # Must Need First page touch
-        rv = pixiv.get(pixiv_url['index'])
+        res = pixiv.get(pixiv_url['login-page'])
     except ConnectionError as e:
         raise PixivError('Error occured at login process. '
                          'Please report this error with this info:'
                          ' GET + ' + str(e))
 
-    if rv.status_code != 200:
+    if res.status_code != 200:
         raise PixivError('Pixiv server was down!')
 
+    match = login_field_regex.search(res.text)
+    if not match:
+        raise PixivError('Can not find login metadata in login page')
+
+    data = json.loads(match.group(1))
+
+    index = data['pixivAccount.returnTo'].replace('\\', '')
+
     try:
-        rv = pixiv.post(pixiv_url['login'], data={
-            'mode': 'login',
-            'return_to': '/',
+        res = pixiv.post(pixiv_url['login-api'], data={
             'pixiv_id': id,
-            'pass': password,
-            'skip': '1'
+            'password': password,
+            'captcha': '',
+            'g_recaptcha_response': '',
+            'post_key': data['pixivAccount.postKey'],
+            'source': data['pixivAccount.source'],
+            'ref': data['pixivAccount.ref'],
+            'return_to': index,
         })
     except ConnectionError as e:
         raise PixivError('Error occured at login process. '
                          'Please report this error with this info:'
                          ' POST + ' + str(e))
 
-    if rv.status_code != 200:
+    if res.status_code != 200:
         raise PixivError('Pixiv login server was down!')
 
-    if '誤入力が続いたため、アカウントのロックを行いました。しばらく経ってからログインをお試しください。' \
-            in rv.text:
-        raise PixivError('Your login is restricted. Try it after.')
-    return pixiv_url['index'] == rv.url
+    errors = res.json()['body'].get('validation_errors', {})
+
+    if errors:
+        raise PixivError('Fail to login. See error messages: {}'.format(
+            ', '.join(errors.values())
+        ))
 
 
 class PixivError(Exception):

@@ -1,4 +1,5 @@
 import contextlib
+import json
 import zipfile
 
 import pytest
@@ -52,7 +53,7 @@ def test_login_pixiv_down(fx_valid_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
+            'url': 'https://accounts.pixiv.net/login',
             'body': 'dead',
             'status': 404,
         })
@@ -63,7 +64,7 @@ def test_login_pixiv_down(fx_valid_id_pw):
     test()
 
 
-def test_login_pixiv_login_server_down(fx_valid_id_pw):
+def test_login_pixiv_login_server_down(fx_valid_id_pw, fx_login_page_body):
     """Test :func:`ugoira.lib.login` try, but pixiv login server down and
     raise :exception:`ugoira.lib.PixivError`.
 
@@ -74,15 +75,15 @@ def test_login_pixiv_login_server_down(fx_valid_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'pass',
+            'url': 'https://accounts.pixiv.net/login',
+            'body': fx_login_page_body,
             'status': 200,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.pixiv.net/login.php',
-            'body': 'dead',
-            'content_type': 'text/html; charset=utf-8',
+            'url': 'https://accounts.pixiv.net/api/login',
+            'body': json.dumps({}),
+            'content_type': 'application/json; charset=utf-8',
             'status': 404,
         })
 
@@ -103,8 +104,8 @@ def test_login_pixiv_error(fx_valid_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': ConnectionError('dead'),
+            'url': 'https://accounts.pixiv.net/login?lang=ja',
+            'body': ConnectionError(json.dumps({})),
             'status': 500,
         })
 
@@ -114,7 +115,7 @@ def test_login_pixiv_error(fx_valid_id_pw):
     test()
 
 
-def test_login_pixiv_login_server_error(fx_valid_id_pw):
+def test_login_pixiv_login_server_error(fx_valid_id_pw, fx_login_page_body):
     """Test :func:`ugoira.lib.login` try, but pixiv login server error and
     raise :exception:`ugoira.lib.PixivError`.
 
@@ -125,14 +126,14 @@ def test_login_pixiv_login_server_error(fx_valid_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'pass',
+            'url': 'https://accounts.pixiv.net/login',
+            'body': fx_login_page_body,
             'status': 200,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.pixiv.net/login.php',
-            'body': ConnectionError('dead'),
+            'url': 'https://accounts.pixiv.net/api/login',
+            'body': ConnectionError(json.dumps({})),
             'status': 500,
         })
 
@@ -142,7 +143,7 @@ def test_login_pixiv_login_server_error(fx_valid_id_pw):
     test()
 
 
-def test_login_valid(fx_valid_id_pw):
+def test_login_valid(fx_valid_id_pw, fx_login_page_body):
     """Test :func:`ugoira.lib.login` successfully."""
 
     @responses.activate
@@ -150,30 +151,34 @@ def test_login_valid(fx_valid_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
+            'url': 'https://accounts.pixiv.net/login',
+            'body': fx_login_page_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.pixiv.net/login.php',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
-            'content_type': 'text/html; charset=utf-8',
-            'status': 301,
-            'adding_headers': {
-                'Location': 'http://www.pixiv.net/'
-            },
+            'url': 'https://accounts.pixiv.net/api/login',
+            'body': json.dumps({
+                'error': False,
+                'message': '',
+                'body': {
+                    'success': {'redirect_to': 'http://www.pixiv.net/'},
+                },
+            }),
+            'content_type': 'application/json; charset=utf-8',
+            'status': 200,
         })
 
-        assert login(*fx_valid_id_pw)
+        try:
+            login(*fx_valid_id_pw)
+        except:
+            raise AssertionError
 
     test()
 
 
-def test_login_pw_is_too_short(fx_too_short_id_pw):
+def test_login_pw_is_too_short(fx_too_short_id_pw, fx_login_page_body):
     """Test :func:`ugoira.lib.login` with too short password.
 
     It must raise :class:`ugoira.lib.PixivError`.
@@ -185,9 +190,8 @@ def test_login_pw_is_too_short(fx_too_short_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
+            'url': 'https://accounts.pixiv.net/login',
+            'body': fx_login_page_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
         })
@@ -197,7 +201,7 @@ def test_login_pw_is_too_short(fx_too_short_id_pw):
     test()
 
 
-def test_login_pw_is_too_long(fx_too_long_id_pw):
+def test_login_pw_is_too_long(fx_too_long_id_pw, fx_login_page_body):
     """Test :func:`ugoira.lib.login` with too long password.
 
     It must raise :class:`ugoira.lib.PixivError`.
@@ -209,9 +213,8 @@ def test_login_pw_is_too_long(fx_too_long_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
+            'url': 'https://accounts.pixiv.net/login',
+            'body': fx_login_page_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
         })
@@ -221,7 +224,7 @@ def test_login_pw_is_too_long(fx_too_long_id_pw):
     test()
 
 
-def test_login_invalid(fx_invalid_id_pw):
+def test_login_invalid(fx_invalid_id_pw, fx_login_page_body):
     """Test :func:`ugoira.lib.login` with invalid id/pw pair.
 
     It must raise :class:`ugoira.lib.PixivError`.
@@ -233,64 +236,27 @@ def test_login_invalid(fx_invalid_id_pw):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
+            'url': 'https://accounts.pixiv.net/login',
+            'body': fx_login_page_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
         })
         responses.add(**{
             'method': responses.POST,
-            'url': 'https://www.pixiv.net/login.php',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
-            'content_type': 'text/html; charset=utf-8',
-            'status': 301,
-            'adding_headers': {
-                'Location': 'http://example.com/'
-            },
-        })
-        responses.add(**{
-            'method': responses.GET,
-            'url': 'http://example.com/',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
-            'content_type': 'text/html; charset=utf-8',
+            'url': 'https://accounts.pixiv.net/api/login',
+            'body': json.dumps({
+                'error': False,
+                'message': '',
+                'body': {
+                    'validation_errors': {
+                        'pixiv_id': ('Please check if your pixiv ID or'
+                                     ' email address was entered correctly.'),
+                    },
+                },
+            }),
+            'content_type': 'application/json; charset=utf-8',
             'status': 200,
         })
-
-        assert not login(*fx_invalid_id_pw)
-
-    test()
-
-
-def test_login_too_many_fail(fx_invalid_id_pw):
-    """Test :func:`ugoira.lib.login` with too many fail before.
-
-    It must raise :class:`ugoira.lib.PixivError`.
-
-    """
-
-    @responses.activate
-    def test():
-        responses.reset()
-        responses.add(**{
-            'method': responses.GET,
-            'url': 'http://www.pixiv.net/',
-            'body': 'Just touch, Do not access it really.'
-                    ' Because they block us.',
-            'content_type': 'text/html; charset=utf-8',
-            'status': 200,
-        })
-        responses.add(**{
-            'method': responses.POST,
-            'url': 'https://www.pixiv.net/login.php',
-            'body': '誤入力が続いたため、アカウントのロックを行いました。'
-                    'しばらく経ってからログインをお試しください。',
-            'content_type': 'text/html; charset=utf-8',
-            'status': 200,
-        })
-
         with pytest.raises(PixivError):
             login(*fx_invalid_id_pw)
 
