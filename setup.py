@@ -1,19 +1,19 @@
 from setuptools import find_packages, setup
 
-install_requires = {
+install_requires = [
     'click >= 5.1',
     'requests >= 2.8.1',
     'Wand >= 0.4.1',
-}
+]
 
-tests_require = {
+tests_require = [
     'pytest >= 2.8.2',
     'responses >= 0.5.0',
-}
+]
 
-docs_requires = {
+docs_requires = [
     'Sphinx >= 1.3.1',
-}
+]
 
 extras_require = {
     'tests': tests_require,
