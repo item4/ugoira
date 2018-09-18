@@ -1,17 +1,9 @@
-import os
 import pathlib
 import zipfile
 
 from pytest import fixture
-from ugoira.lib import pixiv
 from wand.color import Color
 from wand.image import Image
-
-
-def pytest_addoption(parser):
-    parser.addoption('--pixiv-id', default=os.getenv('PIXIV_ID', None))
-    parser.addoption('--pixiv-password',
-                     default=os.getenv('PIXIV_PASSWORD', None))
 
 
 @fixture

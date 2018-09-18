@@ -30,10 +30,9 @@ There are options as well:
 
 """
 
-from .lib import PixivError, download_zip, is_ugoira, make_gif, save_zip
-
 from click import Path, argument, command, echo, option
 
+from .lib import PixivError, download_zip, is_ugoira, make_gif, save_zip
 
 __all__ = 'ugoira',
 
@@ -50,7 +49,12 @@ def ugoira(acceleration: float,
     """ugoira command for download Pixiv Ugokuillust."""
 
     if is_ugoira(illust_id):
-        blob, frames = download_zip(illust_id)
+        try:
+            blob, frames = download_zip(illust_id)
+        except PixivError as e:
+            echo('Error {}'.format(e), err=True)
+            raise SystemExit(1)
+
         if dest.endswith('.zip'):
             save_zip(dest, blob)
             echo('download completed at {} as zip'.format(dest))

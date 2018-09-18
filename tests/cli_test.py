@@ -1,9 +1,8 @@
-import json
-
 from click.testing import CliRunner
-import responses
-from ugoira.cli import ugoira
 
+import responses
+
+from ugoira.cli import ugoira
 
 
 def test_download_gif(fx_tmpdir,

@@ -9,6 +9,7 @@ install_requires = [
 tests_require = [
     'pytest ~= 3.8.0',
     'responses ~= 0.9.0',
+    'flake8 ~= 3.5.0',
 ]
 
 docs_requires = [

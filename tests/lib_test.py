@@ -1,14 +1,11 @@
 import contextlib
-import json
 import zipfile
 
 import pytest
 import responses
-from requests.exceptions import ConnectionError
 from ugoira.lib import (PixivError, download_zip, is_ugoira, make_gif,
                         save_zip)
 from wand.image import Image
-
 
 
 def test_is_ugoira_true(fx_ugoira_body):
