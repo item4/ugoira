@@ -22,44 +22,6 @@ def fx_tmpdir(tmpdir):
 
 
 @fixture
-def fx_valid_id_pw():
-    """Pixiv ID/PW pair fake."""
-
-    id = 'item4'
-    password = 'supersecret'
-
-    return id, password
-
-
-@fixture
-def fx_too_short_id_pw():
-    """Too short password case."""
-
-    return 'test', '1'
-
-
-@fixture
-def fx_too_long_id_pw():
-    """Too long password case."""
-
-    return 'test', '1'*100
-
-
-@fixture
-def fx_invalid_id_pw():
-    """Invalid ID/PW pair case."""
-    return 'invalid_id', 'invalid_pw'
-
-
-@fixture
-def fx_login_page_body():
-    """Pixiv login page dummy"""
-
-    with open('./tests/mock/login_page.html') as f:
-        return f.read().encode('u8')
-
-
-@fixture
 def fx_ugoira_body():
     """Ugoira page data."""
 
@@ -111,9 +73,3 @@ def fx_ugoira_frames():
         '000001.jpg': 2000,
         '000002.jpg': 3000,
     }
-
-
-@fixture(autouse=True)
-def fx_clear_cache():
-    """Clear redirect cache for tests."""
-    pixiv.redirect_cache.clear()
