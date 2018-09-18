@@ -1,16 +1,16 @@
 language: python
 sudo: false
 matrix:
-    include:
-        - python: 3.4
-          dist: trusty
-        - python: 3.5
-          dist: trusty
-        - python: 3.6
-          dist: trusty
-        - python: 3.7
-          dist: xenial
-          sudo: true
+  include:
+  - python: 3.4
+    dist: trusty
+  - python: 3.5
+    dist: trusty
+  - python: 3.6
+    dist: trusty
+  - python: 3.7
+    dist: xenial
+    sudo: true
 addons:
   apt:
     packages:
@@ -24,8 +24,5 @@ script:
 after_success:
 - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && coveralls || false'
 notifications:
-  irc:
-    channels:
-    - "irc.ozinger.org#item4"
-    on_success: change
-    on_failure: always
+  slack:
+    secure: YWBdBV/VyFfQ6f8+LxUuMqG/PL45T/CUQSh9kl7lOuzmsP/Vv73Pbs77qLMTdMNxU8jxrOPkMZPtNCxU51bqRIkWtszDDoPt+DeG1Z+xCdcVMEOeu4+gZ96nrM0UxzAgTlkfPkcPa0nliuC5PRvr6uoIF90rpoCnbZTFfdlHHR3jiV2928WDDX5gQnQ4XGNAvWLxaAf77gyTHyCbxDuHj4XsJqppjxDksro/uQmdhl2rbhjLlq8W3zHg/pf/IKeRDGjEnHzfUZMnPOjt73q3V9c8+1SWAisEQx+/bBBzncX6Ez4tFlAEYlD6LRXzZ54E6oP9G/U3l7zPzOHCBKLK5eh5nK5Oq1Va1hmJfRqEa9niNg8UH8JZUlem212gled1an94c4uX4Y0cmsI8Cozg56pI2Hoz/K0Y1V1EeXLnNj1IV0rc89JU8wxAWMSNV0dcxl6xEHs80P4o8ETebqU7h+BnfVM/BVlksj68Fi36efbFWtoPWu5Et9jaH8A2nzt51mf570bfcMEo+txwPTJQMSGsVOjqN/egzIXeFWQaBYuO+03bGGwR8s5ulgpuC+CihpEMrOSncCfjQlv7zGrxzGPMaXXNMqiqXbVgpgiuYXRYbJRrwEVEZ9mi5+D+DPXqThRs8LZTCroU5J+blblsDEkYBQiC70trJqRHrHvg64w=
