@@ -72,7 +72,7 @@ There are options as well:
 
 """
 
-from .lib import PixivError, download_zip, is_ugoira, login, make_gif, save_zip
+from .lib import PixivError, download_zip, is_ugoira, make_gif, save_zip
 
 from click import Path, argument, command, echo, option
 
@@ -81,26 +81,16 @@ __all__ = 'ugoira',
 
 
 @command()
-@option('--id', prompt='Your Pixiv ID', help='Pixiv ID', envvar='PIXIV_ID')
-@option('--password', prompt=True, hide_input=True, help='Pixiv Password',
-        envvar='PIXIV_PASSWORD')
 @option('--acceleration', type=float, default=1.0,
         help='You can accelerate interval between images by using this option.'
              ' Default value is 1.0 (default speed)')
 @argument('illust-id', type=int)
 @argument('dest', type=Path())
-def ugoira(id: str,
-           password: str,
-           acceleration: float,
+def ugoira(acceleration: float,
            illust_id: int,
            dest: str):
     """ugoira command for download Pixiv Ugokuillust."""
 
-    try:
-        login(id, password)
-    except PixivError as e:
-        echo(e, err=True)
-        raise SystemExit(1)
     if is_ugoira(illust_id):
         blob, frames = download_zip(illust_id)
         if dest.endswith('.zip'):
