@@ -8,7 +8,8 @@ install:
 - pip install -e .[tests]
 - pip install pytest-cov coveralls
 script:
-- py.test -v --cov ugoira
+- pytest -v --cov ugoira
+- flake8 ugoira tests
 after_success:
 - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && coveralls || false'
 notifications:
