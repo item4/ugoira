@@ -22,48 +22,6 @@ This provide ugoira download command line executable :program:`ugoira`:
 
 There are options as well:
 
-.. option:: --id <id>
-
-   Your Pixiv Account ID. It needs by Pixiv access.
-
-   You can omit this option by export environment variable.
-
-   In Linux/Mac
-
-   .. sourcecode:: console
-
-      $ export PIXIV_ID='item4'
-
-   In Windows
-
-   .. sourcecode:: console
-
-      $ set PIXIV_ID='item4'
-
-   If you omit this option without environment variable, ugoira show prompt to
-   input ID.
-
-.. option:: --password <password>
-
-   Your Pixiv Account Password. It needs by Pixiv access.
-
-   You can omit this option by export environment variable.
-
-   In Linux/Mac
-
-   .. sourcecode:: console
-
-      $ export PIXIV_PASSWORD='supersecret'
-
-   In Windows
-
-   .. sourcecode:: console
-
-      $ set PIXIV_PASSWORD='supersecret'
-
-   If you omit this option without environment variable, ugoira show prompt to
-   input Password.
-
 .. option:: --acceleration <speed>
 
    You can accelerate GIF speed using this option.

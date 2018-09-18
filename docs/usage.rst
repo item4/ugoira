@@ -71,26 +71,3 @@ If you can not find where is the file exists, type this.
 .. sourcecode:: console
 
    $ pwd
-
-Skip typing ``ID`` and ``Password``
------------------------------------
-
-Do you want to do not repeat constantly typing ID and Password repeatly?
-
-You can use environment variable.
-
-In Linux/Mac
-
-.. sourcecode:: console
-
-   $ export PIXIV_ID='item4'
-   $ export PIXIV_PASSWORD='supersecret'
-
-In Windows
-
-.. sourcecode:: console
-
-   $ set PIXIV_ID='item4'
-   $ set PIXIV_PASSWORD='supersecret'
-
-Now you can use :program:`ugoira` without typing ID and Password.
