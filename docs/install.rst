@@ -8,24 +8,23 @@ Prerequisites
 
 Ugoira is made with the following softwares:
 
-Python_ 3.3 or higher
+Python_ 3.4 or higher
    ugoira is mostly written in Python language.  It's a high-level scripting
-   language for general purpose. We recommend 3.5 or higher because
-   we use 3.5.0 in develop.
+   language for general purpose. ugoira tested in Python 3.4, 3.5, 3.6 and 3.7.
 
-Newest version of Imagemagick_
-   ugoira's image generator use Imagemagick internally. It's a image
+`Imagemagick 6`_
+   ugoira use Imagemagick 6 for generate gif image. It's a image
    manipulation toolkit.
 
 Mac OS X
 ++++++++
 
 If you're using Mac, you can find CPython installer in Python_ website's
-download page and you can find Imagemagick_ installer in Homebrew_.
+download page and you can find `Imagemagick 6`_ installer in Homebrew_.
 
 .. sourcecode:: console
 
-   $ brew install imagemagick
+   $ brew install imagemagick@6
 
 
 Windows
@@ -45,10 +44,10 @@ it can be easily installed using APT:
 .. sourcecode:: console
 
    $ sudo apt-get update
-   $ sudo apt-get install python3 libmagickwand-dev
+   $ sudo apt-get install python3 libmagickwand6-dev
 
 
-.. _Imagemagick: http://www.imagemagick.org/script/index.php
+.. _`Imagemagick 6`: http://www.imagemagick.org/script/index.php
 .. _Homebrew: http://brew.sh/
 .. _Python: https://www.python.org/
 

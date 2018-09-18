@@ -292,6 +292,6 @@ texinfo_documents = [
 
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3/', None),
-    'click': ('http://click.pocoo.org/3/', None),
+    'click': ('http://click.pocoo.org/latest/', None),
     'requests': ('http://docs.python-requests.org/en/latest/', None),
 }
