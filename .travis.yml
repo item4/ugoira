@@ -2,8 +2,6 @@ language: python
 sudo: false
 matrix:
   include:
-  - python: 3.4
-    dist: trusty
   - python: 3.5
     dist: trusty
   - python: 3.6
@@ -16,7 +14,7 @@ addons:
     packages:
     - libmagickwand-dev
 install:
-- pip install -e .[tests]
+- pip install -e .[tests,apng]
 - pip install pytest-cov coveralls
 script:
 - pytest -v --cov ugoira

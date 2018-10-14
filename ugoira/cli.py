@@ -6,64 +6,95 @@ This provide ugoira download command line executable :program:`ugoira`:
 .. sourcecode:: console
 
    $ ugoira
-   Usage: ugoira [OPTIONS] ILLUST_ID DEST
+   Usage: ugoira [OPTIONS] ILLUST_ID
 
 .. describe:: ILLUST_ID
 
    ``illust-id`` of your wants to download.
    It can get from Pixiv image url. see ``illust-id`` parameter in url.
 
-.. describe:: DEST
-
-   The saving path of generated file by work.
-   If DEST's suffix is ``.zip``, ugoira generate ZIP file.
-   If DEST's suffix is ``.gif`` or not match any cases, ugoira generate
-   GIF image.
-
 There are options as well:
 
-.. option:: --acceleration <speed>
+.. option:: --speed <amount>
 
-   You can accelerate GIF speed using this option.
-   For example, if you given it 10, GIF fasten 10x.
-   Default is :const:`1.0`.
+   If you want to make animated image file, you can
+   divide seconds of each frames's interval.
+   Default value is 1.0 (no change)
+
+.. option:: --format <file_format>
+.. option:: -f <file_format>
+
+   Format of result file.
+   You can select apng, gif, and zip format.
+   Default value is gif.
+
+.. option:: --dest <path>
+.. option:: -d <path>
+
+   Path of output file.
+   Default is ``./<illust-id>.<format>``\.
 
 """
+from typing import Optional
 
 from click import Path, argument, command, echo, option
 
-from .lib import PixivError, download_zip, is_ugoira, make_gif, save_zip
+from .lib import PixivError, download_ugoira_zip, is_ugoira, save
 
 __all__ = 'ugoira',
 
 
 @command()
-@option('--acceleration', type=float, default=1.0,
-        help='You can accelerate interval between images by using this option.'
-             ' Default value is 1.0 (default speed)')
+@option(
+    '--speed',
+    type=float,
+    default=1.0,
+    help="If you want to make animated image file, "
+         "you can divide seconds of each frames's interval."
+         " Default value is 1.0 (no change)",
+)
+@option(
+    '--format',
+    '-f',
+    type=str,
+    default='gif',
+    help='Format of result file.'
+         ' You can select apng, gif, and zip format.'
+         ' Default value is gif.'
+)
+@option(
+    '--dest',
+    '-d',
+    type=Path(),
+    help='Path of output file. Default is `./<illust-id>.<format>`.',
+)
 @argument('illust-id', type=int)
-@argument('dest', type=Path())
-def ugoira(acceleration: float,
-           illust_id: int,
-           dest: str):
+def ugoira(
+    speed: float,
+    format: str,
+    dest: Optional[str],
+    illust_id: int,
+):
     """ugoira command for download Pixiv Ugokuillust."""
 
     if is_ugoira(illust_id):
         try:
-            blob, frames = download_zip(illust_id)
+            blob, frames = download_ugoira_zip(illust_id)
         except PixivError as e:
-            echo('Error {}'.format(e), err=True)
+            echo('Error: {}'.format(e), err=True)
             raise SystemExit(1)
 
-        if dest.endswith('.zip'):
-            save_zip(dest, blob)
-            echo('download completed at {} as zip'.format(dest))
-        else:
-            if not dest.endswith('.gif'):
-                dest += '.gif'
+        if dest is None:
+            dest = '{}.{}'.format(illust_id, format)
 
-            make_gif(dest, blob, frames, acceleration)
-            echo('download completed at {} as gif'.format(dest))
+        save(format, dest, blob, frames, speed)
+        echo(
+            'Download was completed successfully.'
+            ' format is {} and output path is {}'.format(
+                format,
+                dest,
+            )
+        )
     else:
         echo('Given illust-id is not ugoira.', err=True)
         raise SystemExit(1)

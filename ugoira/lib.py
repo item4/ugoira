@@ -5,51 +5,42 @@ Ugoira Download Library
 
 """
 
+import contextlib
 import json
 import pathlib
 import re
 import tempfile
 import zipfile
+from typing import Dict, Tuple
+
+from fake_useragent import UserAgent
 
 from requests import Session
+
 from wand.image import Image
 
 __all__ = (
     'PixivError',
-    'download_zip',
+    'download_ugoira_zip',
     'is_ugoira',
+    'make_apng',
     'make_gif',
+    'make_zip',
     'pixiv',
-    'pixiv_url',
-    'save_zip',
+    'save',
     'ugoira_data_regex',
-    'user_agent',
 )
 
-#: (:class:`str`) User-Agent for fake
-user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:34.0)' + \
-             ' Gecko/20100101 Firefox/34.0'
-
-#: (:class:`dict`) URLs needed by API
-pixiv_url = {
-    'image-main': ('http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id={}'),
-}
+FRAME_DATA_TYPE = Dict[str, int]
 
 #: (:class:`requests.Session`) requests Session for keep headers
 pixiv = Session()
-pixiv.headers['User-Agent'] = user_agent
-
-
-#: (:class:`re.regex`) regular expression for grep login field data
-login_field_regex = re.compile(
-    '<input type="hidden" id="init-config" class="json-data" value=\'(.+)\'>'
-)
+pixiv.headers['User-Agent'] = UserAgent().chrome
 
 #: (:class:`re.regex`) regular expression for grep ugoira data
 ugoira_data_regex = re.compile(
     r'pixiv\.context\.ugokuIllustData\s*=\s*'
-    '(\{"src":".+?","mime_type":".+?","frames":\[.+?\]\})'
+    r'(\{"src":".+?","mime_type":".+?","frames":\[.+?\]\})'
 )
 
 
@@ -57,7 +48,24 @@ class PixivError(Exception):
     """Error with Pixiv"""
 
 
-def is_ugoira(illust_id: int):
+def get_illust_url(illust_id: int) -> str:
+    """Get illust URL from ``illust_id``.
+
+    :param illust_id: Pixiv illust_id
+    :type illust_id: :class:`int`
+    :return: Pixiv Illust URL
+    :rtype: :class:`str`
+
+    """
+    return (
+        'http://www.pixiv.net/member_illust.php'
+        '?mode=medium&illust_id={}'.format(
+            illust_id,
+        )
+    )
+
+
+def is_ugoira(illust_id: int) -> bool:
     """Check this image type.
 
     :param illust_id: Pixiv illust_id
@@ -67,22 +75,21 @@ def is_ugoira(illust_id: int):
 
     """
 
-    res = pixiv.get(pixiv_url['image-main'].format(illust_id))
+    res = pixiv.get(get_illust_url(illust_id))
     return '_ugoku-illust-player-container' in res.text
 
 
-def download_zip(illust_id: int):
+def download_ugoira_zip(illust_id: int) -> Tuple[bytes, FRAME_DATA_TYPE]:
     """Download ugoira zip archive.
 
     :param illust_id: Pixiv illust_id
     :type illust_id: :class:`int`
-    :return: zip file bytes(:class:`bytes`) and frame data(:class:`dict`)
-    :rtype: :class:`tuple`
+    :return: blob of zip file and frame data
     :raise PixivError: If fail to access to image file.
 
     """
 
-    image_main_url = pixiv_url['image-main'].format(illust_id)
+    image_main_url = get_illust_url(illust_id)
     res = pixiv.get(image_main_url)
     data = json.loads(ugoira_data_regex.search(res.text).group(1))
     pixiv.headers['Referer'] = image_main_url
@@ -96,57 +103,141 @@ def download_zip(illust_id: int):
     return res.content, frames
 
 
-def make_gif(filename: str, file_data: bytes, frames: dict, acceleration=1.0):
-    """Make GIF file from given file data and frame data.
+@contextlib.contextmanager
+def open_zip_blob(blob: bytes):
+    """Make temporary zip file and open it for touch inner files
 
-    :param filename: filename of dest
-    :type filename: :class:`str`
-    :param file_data: zip file bytes from :func:`ugoira.lib.download_zip`
-    :type file_data: :class:`bytes`
-    :param frames: dict of each frames delay by frame filename
-    :type frames: :class:`dict`
-    :param acceleration: speed acceleration control
-    :type acceleration: :class:`float`
+    :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
+    :type blob: :class:`bytes`
 
     """
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        file = pathlib.Path(tmpdirname) / 'temp.zip'
-        with file.open('wb') as f:
-            f.write(file_data)
-        with zipfile.ZipFile(str(file)) as zipf:
-            files = zipf.namelist()
-            first_image = zipf.read(files[0])
-
-            with Image(blob=first_image) as img:
-                width = img.width
-                height = img.height
-
-            with Image(width=width,
-                       height=height) as container:
-                with container.convert('gif') as gif:
-                    gif.sequence.clear()  # remove first empty frame
-                    for file in files:
-                        with Image(blob=zipf.read(file)) as part_image:
-                            with part_image.convert('gif') as part_gif:
-                                part = part_gif.sequence[0]
-                                gif.sequence.append(part)
-                                with gif.sequence[-1]:
-                                    gif.sequence[-1].delay = \
-                                        int(frames[file]//10//acceleration)
-
-                    gif.save(filename=filename)
+        tempzipfile = pathlib.Path(tmpdirname) / 'temp.zip'
+        with tempzipfile.open('wb') as f:
+            f.write(blob)
+        with zipfile.ZipFile(str(tempzipfile)) as zf:
+            yield zf
 
 
-def save_zip(filename: str, blob: bytes):
-    """Make ZIP file from given file data.
+def make_apng(
+    dest: str,
+    blob: bytes,
+    frames: FRAME_DATA_TYPE,
+    speed: float=1.0,
+):
+    """Make APNG file from given file data and frame data.
 
-    :param filename: filename of dest
-    :type filename: :class:`str`
-    :param file_data: zip file bytes from :func:`ugoira.lib.download_zip`
-    :type file_data: :class:`bytes`
+    This function must need apng library dependency.
+
+    :param dest: path of output file
+    :type dest: :class:`str`
+    :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
+    :type blob: :class:`bytes`
+    :param frames: mapping object of each frame's filename and interval
+    :param speed: frame interval control value
+    :type speed: :class:`float`
 
     """
 
-    with open(filename, 'wb') as f:
+    from apng import APNG, PNG
+
+    with open_zip_blob(blob) as zf:
+        files = zf.namelist()
+        container = APNG()
+
+        for fname in files:
+            with Image(blob=zf.read(fname)) as frame:
+                container.append(
+                    PNG.from_bytes(frame.make_blob('png')),
+                    delay=int(frames[fname]//speed),
+                )
+
+        container.save(dest)
+
+
+def make_gif(
+    dest: str,
+    blob: bytes,
+    frames: FRAME_DATA_TYPE,
+    speed: float=1.0,
+):
+    """Make GIF file from given file data and frame data.
+
+    :param dest: path of output file
+    :type dest: :class:`str`
+    :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
+    :type blob: :class:`bytes`
+    :param frames: mapping object of each frame's filename and interval
+    :param speed: frame interval control value
+    :type speed: :class:`float`
+
+    """
+
+    with open_zip_blob(blob) as zf:
+        files = zf.namelist()
+        first_image = zf.read(files[0])
+
+        with Image(blob=first_image) as img:
+            width = img.width
+            height = img.height
+
+        with Image(width=width, height=height) as container:
+            container.sequence.clear()  # remove first empty frame
+            for fname in files:
+                with Image(blob=zf.read(fname)) as orignal_frame:
+                    with orignal_frame.convert('gif') as gif_frame:
+                        container.sequence.append(gif_frame.sequence[0])
+                        with container.sequence[-1]:
+                            container.sequence[-1].delay = int(
+                                frames[fname]//10//speed
+                            )
+
+            container.save(filename=dest)
+
+
+def make_zip(
+    dest: str,
+    blob: bytes,
+    *args,
+    **kwargs
+):
+    """Make ZIP file from given file data.
+
+    :param dest: path of output file
+    :type dest: :class:`str`
+    :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
+    :type blob: :class:`bytes`
+
+    """
+
+    with open(dest, 'wb') as f:
         f.write(blob)
+
+
+def save(
+    format: str,
+    dest: str,
+    blob: bytes,
+    frames: FRAME_DATA_TYPE,
+    speed: float=1.0,
+):
+    """Save blob to file.
+
+    :param format: file format
+    :type format: :class:`str`
+    :param dest: path of output file
+    :type dest: :class:`str`
+    :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
+    :type blob: :class:`bytes`
+    :param frames: mapping object of each frame's filename and interval
+    :param speed: frame interval control value
+    :type speed: :class:`float`
+
+    """
+
+    {
+        'zip': make_zip,
+        'apng': make_apng,
+        'gif': make_gif,
+    }.get(format)(dest, blob, frames, speed)

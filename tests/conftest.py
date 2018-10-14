@@ -2,6 +2,7 @@ import pathlib
 import zipfile
 
 from pytest import fixture
+
 from wand.color import Color
 from wand.image import Image
 

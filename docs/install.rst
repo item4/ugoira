@@ -8,9 +8,9 @@ Prerequisites
 
 Ugoira is made with the following softwares:
 
-Python_ 3.4 or higher
+Python_ 3.5 or higher
    ugoira is mostly written in Python language.  It's a high-level scripting
-   language for general purpose. ugoira tested in Python 3.4, 3.5, 3.6 and 3.7.
+   language for general purpose. ugoira tested in Python 3.5, 3.6 and 3.7.
 
 `Imagemagick 6`_
    ugoira use Imagemagick 6 for generate gif image. It's a image
@@ -61,6 +61,12 @@ the ``cmd``. If you use Mac OS X or Linux, open the terminal, And type this
 .. sourcecode:: console
 
    $ pip3 install ugoira
+
+If you want to handle apng format, Type this
+
+.. sourcecode:: console
+
+   $ pip3 install ugoira[apng]
 
 Install is completed. You can test it by this command.
 

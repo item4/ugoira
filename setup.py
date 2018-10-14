@@ -2,6 +2,7 @@ from setuptools import find_packages, setup
 
 install_requires = [
     'click ~= 6.7',
+    'fake_useragent ~= 0.1.11',
     'requests ~= 2.19.1',
     'Wand ~= 0.4.4',
 ]
@@ -19,17 +20,20 @@ docs_requires = [
 extras_require = {
     'tests': tests_require,
     'docs': docs_requires,
+    'apng': [
+        'apng ~= 0.3.2',
+    ],
 }
 
 setup(
     name='ugoira',
     author='item4',
     author_email='item4_hun' '@' 'hotmail.com',
-    version='0.3.0',
+    version='0.4.0',
     description='ugoira for download pixiv ugoira images',
     long_description=open('README.rst').read(),
     url='https://github.com/item4/ugoira',
-    download_url='https://github.com/item4/ugoira/tarball/0.3.0',
+    download_url='https://github.com/item4/ugoira/tarball/0.4.0',
     license='MIT',
     packages=find_packages(),
     install_requires=install_requires,

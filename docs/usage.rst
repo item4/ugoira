@@ -17,16 +17,16 @@ Look at the number after ``illust_id=``, ``44525295`` is ``illust-id``!
 english alphabets.
 
 
-Download as GIF (Animated Image File)
--------------------------------------
+Download as GIF
+---------------
 
 You can download ugoira as GIF.
-If you want to download the ``44525295`` to ``toramaru.gif``, type it on
+If you want to download the ``44525295`` as GIF, type it on
 ``cmd`` or terminal.
 
 .. sourcecode:: console
 
-   $ ugoira 44525295 toramaru.gif
+   $ ugoira 44525295
 
 If you can not find where is the file exists, type this.
 
@@ -35,16 +35,35 @@ If you can not find where is the file exists, type this.
    $ pwd
 
 
-Image animation accelerate
-++++++++++++++++++++++++++
+Download as APNG
+----------------
 
-You can accelerate animation speed with ``--acceleration`` option.
+You can download ugoira as APNG with extra dependency.
+If you want to download the ``44525295`` as APNG, type it on
+``cmd`` or terminal.
 
-For example, if you want to acceleration speed by 10x, type it.
+.. sourcecode:: console
+   
+   $ pip install ugoira[apng]
+   $ ugoira --format=apng 44525295
+
+If you can not find where is the file exists, type this.
 
 .. sourcecode:: console
 
-   $ ugoira --acceleration 10 44525295 toramaru.gif
+   $ pwd
+
+
+Change Frame Interval
++++++++++++++++++++++
+
+You can change interval of each frames for change animation speed with ``--speed`` option.
+
+For example, if you want to acceleration speed by 10x, give 10 like it.
+
+.. sourcecode:: console
+
+   $ ugoira --speed 10 44525295
 
 
 Limitation of GIF
@@ -59,15 +78,25 @@ Download as ZIP
 ---------------
 
 You can download ugoira as ZIP.
-If you want to download the ``44525295`` to ``toramaru.zip``, type it on
+If you want to download the ``44525295`` as ZIP, type it on
 ``cmd`` or terminal.
 
 .. sourcecode:: console
 
-   $ ugoira 44525295 toramaru.zip
+   $ ugoira --format=zip 44525295
 
 If you can not find where is the file exists, type this.
 
 .. sourcecode:: console
 
    $ pwd
+
+
+Change result filename and path
+-------------------------------
+
+You can change filename and path by ``--dest`` option.
+
+.. sourcecode:: console
+
+   $ ugoira --dest=toramaru.gif 44525295

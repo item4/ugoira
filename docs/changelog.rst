@@ -1,6 +1,18 @@
 Changlog
 ========
 
+Version 0.4.0
+-------------
+
+- (break) Drop Python 3.4 support
+- (break) Write some type hints
+- (break) Change usage of CLI
+- (break) Refactor logic
+- (new) Use more nice fake User-Agent
+- (new) Support APNG format
+- (docs) Update docs about 0.4.0 version
+- (docs) Fix ugoira version on docs
+
 Version 0.3.0
 -------------
 
