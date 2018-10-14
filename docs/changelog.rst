@@ -4,8 +4,6 @@ Changlog
 Version 0.3.0
 -------------
 
-Not released yet.
-
 - (bugfix) Fix setup.py (PR #1)
 - (break) Remove unnecessary login (PR #2)
 - (docs) Fix installation docs.
