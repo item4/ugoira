@@ -1,6 +1,11 @@
 Changlog
 ========
 
+Version 0.4.1
+-------------
+
+- (docs) Fix README in repo
+
 Version 0.4.0
 -------------
 

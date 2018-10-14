@@ -18,34 +18,11 @@ If you need more detail information, `See the docs for details`__.
 __ http://ugoira.readthedocs.org/en/latest/
 
 
-Simple Installation
--------------------
 
-1. Install Imagemagick
+Contribute
+----------
 
-   I use Wand. It need Imagemagick. Please see `Wand install guide`__
-
-   __ http://docs.wand-py.org/en/0.4.1/guide/install.html
-
-2. Install
-
-   .. code-block:: console
-
-      $ pip install ugoira
-
-
-Usage
------
-
-.. code-block:: console
-
-   $ ugoira illust-id filename.gif
-
-
-For Developer
--------------
-
-You must install Tests Requirements.
+You must install tests requirements for test and lint.
 
 .. code-block:: console
 

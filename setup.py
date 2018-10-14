@@ -29,11 +29,11 @@ setup(
     name='ugoira',
     author='item4',
     author_email='item4_hun' '@' 'hotmail.com',
-    version='0.4.0',
+    version='0.4.1',
     description='ugoira for download pixiv ugoira images',
     long_description=open('README.rst').read(),
     url='https://github.com/item4/ugoira',
-    download_url='https://github.com/item4/ugoira/tarball/0.4.0',
+    download_url='https://github.com/item4/ugoira/tarball/0.4.1',
     license='MIT',
     packages=find_packages(),
     install_requires=install_requires,
@@ -46,7 +46,7 @@ setup(
     },
     keywords=[
         'pixiv',
-        'ugoira'
+        'ugoira',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
