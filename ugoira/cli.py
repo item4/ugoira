@@ -66,35 +66,37 @@ __all__ = 'ugoira',
     '--dest',
     '-d',
     type=Path(),
-    help='Path of output file. Default is `./<illust-id>.<format>`.',
+    default='{}.{}',
+    help='A format string specifying the path of downloaded files.'
+         ' The illust ID and your chosen format will replace {}s in it, if any.'
+         ' Default is \'./{}.{}\'.'
 )
-@argument('illust-id', type=int)
+@argument('illust-ids', type=int, nargs=-1)
 def ugoira(
     speed: float,
     format: str,
     dest: Optional[str],
-    illust_id: int,
+    illust_ids: tuple,
 ):
     """ugoira command for download Pixiv Ugokuillust."""
+    for i, illust_id in enumerate(illust_ids):
+        echo("Downloading {} ({}/{})".format(illust_id, i, len(illust_ids)))
+        if is_ugoira(illust_id):
+            try:
+                blob, frames = download_ugoira_zip(illust_id)
+            except PixivError as e:
+                echo('Error: {}'.format(e), err=True)
+                continue
 
-    if is_ugoira(illust_id):
-        try:
-            blob, frames = download_ugoira_zip(illust_id)
-        except PixivError as e:
-            echo('Error: {}'.format(e), err=True)
-            raise SystemExit(1)
+            filename = dest.format(illust_id, format)
 
-        if dest is None:
-            dest = '{}.{}'.format(illust_id, format)
-
-        save(format, dest, blob, frames, speed)
-        echo(
-            'Download was completed successfully.'
-            ' format is {} and output path is {}'.format(
-                format,
-                dest,
+            save(format, filename, blob, frames, speed)
+            echo(
+                'Download was completed successfully.'
+                ' format is {} and output path is {}'.format(
+                    format,
+                    filename,
+                )
             )
-        )
-    else:
-        echo('Given illust-id is not ugoira.', err=True)
-        raise SystemExit(1)
+        else:
+            echo('Illust ID {} is not ugoira.'.format(illust_id), err=True)
