@@ -1,7 +1,7 @@
 Installation
 ============
 
-This guideline introduce how to install ugoira.
+This guide introduces how to install ugoira.
 
 Prerequisites
 -------------
@@ -9,11 +9,11 @@ Prerequisites
 Ugoira is made with the following softwares:
 
 Python_ 3.5 or higher
-   ugoira is mostly written in Python language.  It's a high-level scripting
-   language for general purpose. ugoira tested in Python 3.5, 3.6 and 3.7.
+   ugoira is mostly written in Python language, a high-level general-purpose scripting
+   language. ugoira was tested in Python 3.5, 3.6 and 3.7.
 
 `Imagemagick 6`_
-   ugoira use Imagemagick 6 for generate gif image. It's a image
+   ugoira uses Imagemagick 6 to generate gif images. It's an image
    manipulation toolkit.
 
 Mac OS X
@@ -68,7 +68,7 @@ If you want to handle apng format, Type this
 
    $ pip3 install ugoira[apng]
 
-Install is completed. You can test it by this command.
+Install is completed. You can test it by issuing this command.
 
 .. sourcecode:: console
 
