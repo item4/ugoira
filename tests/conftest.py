@@ -32,7 +32,7 @@ def fx_non_ugoira_body():
 
 @fixture
 def fx_ugoira_zip(fx_tmpdir):
-    """Make ugoira zip file for test."""
+    """Generates a zip file used in testing instead of downloading an actual ugoira."""
 
     file = fx_tmpdir / '00000000_ugoira600x600.zip'
     imgs = [

@@ -1,17 +1,17 @@
 """:mod:`ugoira.cli` --- Ugoira Download Command Line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This provide ugoira download command line executable :program:`ugoira`:
+This provides a command-line executable :program:`ugoira`:
 
 .. sourcecode:: console
 
    $ ugoira
-   Usage: ugoira [OPTIONS] ILLUST_ID
+   Usage: ugoira [OPTIONS] ILLUST_IDS
 
 .. describe:: ILLUST_ID
 
-   ``illust-id`` of your wants to download.
-   It can get from Pixiv image url. see ``illust-id`` parameter in url.
+   ``illust-id`` of the image you want to download.
+   It can be retrieved from Pixiv image URLs. See ``illust-id`` parameter in URL.
 
 There are options as well:
 
@@ -78,7 +78,7 @@ def ugoira(
     dest: Optional[str],
     illust_ids: tuple,
 ):
-    """ugoira command for download Pixiv Ugokuillust."""
+    """ugoira command to download Pixiv Ugokuillusts."""
     for i, illust_id in enumerate(illust_ids):
         echo("Downloading {} ({}/{})".format(illust_id, i, len(illust_ids)))
         if is_ugoira(illust_id):

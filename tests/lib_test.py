@@ -9,6 +9,7 @@ import responses
 from ugoira.lib import (
     PixivError,
     download_ugoira_zip,
+    get_illust_url,
     is_ugoira,
     make_apng,
     make_gif,
@@ -17,6 +18,9 @@ from ugoira.lib import (
 
 from wand.image import Image
 
+ugoira_id = 74442143
+non_ugoira_id = 74073488
+zip_url = 'https://i.pximg.net/img-zip-ugoira/img/2019/04/29/16/09/38/74442143_ugoira600x600.zip'
 
 def test_is_ugoira_true(fx_ugoira_body):
     """Test :func:`ugoira.lib.ugoira`.
@@ -30,15 +34,14 @@ def test_is_ugoira_true(fx_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(ugoira_id),
             'body': fx_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
             'match_querystring': True,
         })
 
-        assert is_ugoira(53239740)
+        assert is_ugoira(ugoira_id)
 
     test()
 
@@ -55,15 +58,14 @@ def test_is_ugoira_false(fx_non_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53231212',
+            'url': get_illust_url(non_ugoira_id),
             'body': fx_non_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
             'match_querystring': True,
         })
 
-        assert not is_ugoira(53231212)
+        assert not is_ugoira(non_ugoira_id)
 
     test()
 
@@ -80,8 +82,7 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(ugoira_id),
             'body': fx_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
@@ -89,13 +90,12 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'status': 403,
         })
 
         with pytest.raises(PixivError):
-            download_ugoira_zip(53239740)
+            download_ugoira_zip(ugoira_id)
 
     test()
 
@@ -112,8 +112,7 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(ugoira_id),
             'body': fx_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
@@ -121,19 +120,17 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'status': 403,
         })
 
         with pytest.raises(PixivError):
-            download_ugoira_zip(53239740)
+            download_ugoira_zip(ugoira_id)
 
     test()
 
@@ -146,8 +143,7 @@ def test_download_ugoira_zip_success(fx_ugoira_body, fx_ugoira_zip):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(ugoira_id),
             'body': fx_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
@@ -155,20 +151,18 @@ def test_download_ugoira_zip_success(fx_ugoira_body, fx_ugoira_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'body': fx_ugoira_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
 
-        data, frames = download_ugoira_zip(53239740)
+        data, frames = download_ugoira_zip(ugoira_id)
         assert data == fx_ugoira_zip
 
     test()
