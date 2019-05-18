@@ -58,7 +58,7 @@ def get_illust_url(illust_id: int) -> str:
 
     """
     return (
-        'http://www.pixiv.net/member_illust.php'
+        'https://www.pixiv.net/member_illust.php'
         '?mode=medium&illust_id={}'.format(
             illust_id,
         )
