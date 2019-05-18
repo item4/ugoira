@@ -20,7 +20,9 @@ from wand.image import Image
 
 ugoira_id = 74442143
 non_ugoira_id = 74073488
-zip_url = 'https://i.pximg.net/img-zip-ugoira/img/2019/04/29/16/09/38/74442143_ugoira600x600.zip'
+zip_url = 'https://i.pximg.net/img-zip-ugoira/img/' \
+          '2019/04/29/16/09/38/74442143_ugoira600x600.zip'
+
 
 def test_is_ugoira_true(fx_ugoira_body):
     """Test :func:`ugoira.lib.ugoira`.

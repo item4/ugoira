@@ -7,7 +7,9 @@ from ugoira.lib import get_illust_url
 
 ugoira_id = 74442143
 non_ugoira_id = 74073488
-zip_url = 'https://i.pximg.net/img-zip-ugoira/img/2019/04/29/16/09/38/74442143_ugoira600x600.zip'
+zip_url = 'https://i.pximg.net/img-zip-ugoira/img/2019/' \
+          '04/29/16/09/38/74442143_ugoira600x600.zip'
+
 
 def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
     """Test for command download"""
@@ -43,7 +45,7 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         )
         assert result.exit_code == 0
         assert result.output.strip() == (
-            'Downloading {} (0/1)\n'.format(ugoira_id) + 
+            'Downloading {} (0/1)\n'.format(ugoira_id) +
             'Download was completed successfully.'
             ' format is {} and output path is {}{}'.format(
                 'gif',
@@ -81,7 +83,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
             [str(ugoira_id)]
         )
         assert result.output.strip() == (
-            'Downloading {} (0/1)\n'.format(ugoira_id) + 
+            'Downloading {} (0/1)\n'.format(ugoira_id) +
             'Error: Wrong image src. Please report it with illust-id'
         )
 

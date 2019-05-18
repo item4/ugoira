@@ -11,7 +11,8 @@ This provides a command-line executable :program:`ugoira`:
 .. describe:: ILLUST_ID
 
    ``illust-id`` of the image you want to download.
-   It can be retrieved from Pixiv image URLs. See ``illust-id`` parameter in URL.
+   It can be retrieved from Pixiv image URLs.
+   See ``illust-id`` parameter in URL.
 
 There are options as well:
 
@@ -68,7 +69,8 @@ __all__ = 'ugoira',
     type=Path(),
     default='{}.{}',
     help='A format string specifying the path of downloaded files.'
-         ' The illust ID and your chosen format will replace {}s in it, if any.'
+         ' The illust ID and your chosen format will replace'
+         ' {}s in it, if any.'
          ' Default is \'./{}.{}\'.'
 )
 @argument('illust-ids', type=int, nargs=-1)
