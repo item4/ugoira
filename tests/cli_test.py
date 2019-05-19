@@ -3,6 +3,12 @@ from click.testing import CliRunner
 import responses
 
 from ugoira.cli import ugoira
+from ugoira.lib import get_illust_url
+
+ugoira_id = 74442143
+non_ugoira_id = 74073488
+zip_url = 'https://i.pximg.net/img-zip-ugoira/img/2019/' \
+          '04/29/16/09/38/74442143_ugoira600x600.zip'
 
 
 def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
@@ -13,8 +19,7 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(ugoira_id),
             'body': fx_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
@@ -22,14 +27,12 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'body': fx_ugoira_zip,
             'content_type': 'application/zip',
             'status': 200,
@@ -38,14 +41,16 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         runner = CliRunner()
         result = runner.invoke(
             ugoira,
-            ['53239740']
+            [str(ugoira_id)]
         )
         assert result.exit_code == 0
         assert result.output.strip() == (
+            'Downloading {} (0/1)\n'.format(ugoira_id) +
             'Download was completed successfully.'
-            ' format is {} and output path is {}'.format(
+            ' format is {} and output path is {}{}'.format(
                 'gif',
-                '53239740.gif',
+                ugoira_id,
+                '.gif',
             )
         )
 
@@ -60,8 +65,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(ugoira_id),
             'body': fx_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
@@ -69,18 +73,17 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': 'http://i1.pixiv.net/img-zip-ugoira/img/'
-                   '2015/10/27/22/10/14/53239740_ugoira600x600.zip',
+            'url': zip_url,
             'status': 503,
         })
 
         runner = CliRunner()
         result = runner.invoke(
             ugoira,
-            ['53239740']
+            [str(ugoira_id)]
         )
-        assert result.exit_code == 1
         assert result.output.strip() == (
+            'Downloading {} (0/1)\n'.format(ugoira_id) +
             'Error: Wrong image src. Please report it with illust-id'
         )
 
@@ -95,8 +98,7 @@ def test_is_not_ugoira(fx_non_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': 'http://www.pixiv.net/member_illust.php'
-                   '?mode=medium&illust_id=53239740',
+            'url': get_illust_url(non_ugoira_id),
             'body': fx_non_ugoira_body,
             'content_type': 'text/html; charset=utf-8',
             'status': 200,
@@ -106,9 +108,11 @@ def test_is_not_ugoira(fx_non_ugoira_body):
         runner = CliRunner()
         result = runner.invoke(
             ugoira,
-            ['53239740']
+            [str(non_ugoira_id)]
         )
-        assert result.exit_code == 1
-        assert result.output.strip() == 'Given illust-id is not ugoira.'
+        assert result.output.strip() == (
+            'Downloading {} (0/1)\n'.format(non_ugoira_id) +
+            'Illust ID {} is not ugoira.'.format(non_ugoira_id)
+        )
 
     test()

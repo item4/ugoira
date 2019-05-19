@@ -22,6 +22,7 @@ from wand.image import Image
 __all__ = (
     'PixivError',
     'download_ugoira_zip',
+    'get_illust_url',
     'is_ugoira',
     'make_apng',
     'make_gif',

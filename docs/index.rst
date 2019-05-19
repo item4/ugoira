@@ -1,7 +1,7 @@
 Ugoira
 ======
 
-Ugoira is download tool for Pixiv Ugoira.
+Ugoira is a tool for downloading Pixiv Ugoira.
 
 Pixiv Ugoira is **Ugoku** (Animated) Illustration.
 
