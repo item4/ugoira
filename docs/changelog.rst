@@ -1,6 +1,12 @@
 Changlog
 ========
 
+Version 0.5.0
+-------------
+
+- (break) Use secure protocol(HTTPS) instead of naive(HTTP)
+- (break) CLI Support multiple download at once
+
 Version 0.4.1
 -------------
 
