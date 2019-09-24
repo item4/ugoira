@@ -7,17 +7,13 @@ Ugoira Download Library
 
 import contextlib
 import json
-import pathlib
 import re
-import tempfile
 import zipfile
 import io
 from typing import Dict, Tuple
 
 from fake_useragent import UserAgent
-
 from requests import Session
-
 from wand.image import Image
 
 __all__ = (
@@ -114,14 +110,18 @@ def open_zip_blob(blob: bytes):
 
     """
 
-    f = io.BytesIO(bytes)
+    assert isinstance(blob, (bytes, bytearray)), "Parameter `blob` must be " \
+        "of types (bytes, bytearray). Passed %s (%s)" % (type(blob), blob)
+
+    f = io.BytesIO(blob)
     with zipfile.ZipFile(f) as zf:
         yield zf
+
 
 def convert_apng(
     blob: bytes,
     frames: FRAME_DATA_TYPE,
-    speed: float=1.0,
+    speed: float = 1.0,
 ):
     """Make APNG file from given file data and frame data.
 
@@ -157,7 +157,7 @@ def make_apng(
     dest: str,
     blob: bytes,
     frames: FRAME_DATA_TYPE,
-    speed: float=1.0,
+    speed: float = 1.0,
 ):
     """Make APNG file from given file data and frame data.
 
@@ -173,7 +173,6 @@ def make_apng(
 
     """
 
-
     apng_bytes = convert_apng(blob, frames, speed)
     with open(dest, "wb") as fp:
         fp.write(apng_bytes)
@@ -183,7 +182,7 @@ def make_gif(
     dest: str,
     blob: bytes,
     frames: FRAME_DATA_TYPE,
-    speed: float=1.0,
+    speed: float = 1.0,
 ):
     """Make GIF file from given file data and frame data.
 
@@ -243,7 +242,7 @@ def save(
     dest: str,
     blob: bytes,
     frames: FRAME_DATA_TYPE,
-    speed: float=1.0,
+    speed: float = 1.0,
 ):
     """Save blob to file.
 
