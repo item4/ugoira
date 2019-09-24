@@ -9,7 +9,6 @@ import contextlib
 import json
 import pathlib
 import re
-import tempfile
 import zipfile
 import io
 from typing import Dict, Tuple
@@ -114,12 +113,13 @@ def open_zip_blob(blob: bytes):
 
     """
 
-    assert isinstance(blob, (bytes, bytearray)), "Parameter `blob` must be of types (bytes," \
-        " bytearray). Passed %s (%s)" % (type(blob), blob)
+    assert isinstance(blob, (bytes, bytearray)), "Parameter `blob` must be of" \
+        " types (bytes, bytearray). Passed %s (%s)" % (type(blob), blob)
 
     f = io.BytesIO(blob)
     with zipfile.ZipFile(f) as zf:
         yield zf
+
 
 def convert_apng(
     blob: bytes,
