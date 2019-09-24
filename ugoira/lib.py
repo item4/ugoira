@@ -114,6 +114,9 @@ def open_zip_blob(blob: bytes):
 
     """
 
+    assert isinstance(blob, (bytes, bytearray)), "Parameter `blob` must be of types (bytes," \
+        " bytearray). Passed %s (%s)" % (type(blob), blob)
+
     f = io.BytesIO(bytes)
     with zipfile.ZipFile(f) as zf:
         yield zf
