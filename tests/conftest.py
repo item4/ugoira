@@ -27,6 +27,7 @@ def fx_non_ugoira_body():
 
     return '{"error":true,"message":"\uc9c0\uc815\ud55c ID\ub294 \uc6b0\uace0\uc774\ub77c\uac00 \uc544\ub2d9\ub2c8\ub2e4","body":[]}'  # noqa
 
+
 @fixture
 def fx_ugoira_zip(fx_tmpdir):
     """
