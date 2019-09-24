@@ -33,7 +33,7 @@ There are options as well:
 .. option:: -d <path>
 
    Path of output file.
-   Default is ``./<illust-id>.<format>``\.
+   Default is ``./<illust-id>.<format>``.
 
 """
 from typing import Optional
