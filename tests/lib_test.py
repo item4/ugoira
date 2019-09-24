@@ -9,7 +9,6 @@ import responses
 from ugoira.lib import (
     PixivError,
     download_ugoira_zip,
-    get_illust_url,
     get_metadata_url,
     make_apng,
     make_gif,
