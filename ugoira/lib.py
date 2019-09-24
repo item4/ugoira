@@ -137,7 +137,6 @@ def convert_apng(
 
     """
 
-
     from apng import APNG, PNG
 
     with open_zip_blob(blob) as zf:
@@ -151,7 +150,7 @@ def convert_apng(
                     delay=int(frames[fname]//speed),
                 )
 
-        return container
+        return container.to_bytes()
 
 
 def make_apng(
@@ -175,8 +174,9 @@ def make_apng(
     """
 
 
-    container = convert_apng(blob, frames, speed)
-    container.save(dest)
+    apng_bytes = convert_apng(blob, frames, speed)
+    with open(dest, "wb") as fp:
+        fp.write(apng_bytes)
 
 
 def make_gif(
