@@ -6,14 +6,14 @@ Ugoira Download Library
 """
 
 import contextlib
-import json
-import re
-import zipfile
 import io
+import zipfile
 from typing import Dict, Tuple
 
 from fake_useragent import UserAgent
+
 from requests import Session
+
 from wand.image import Image
 
 FRAME_DATA_TYPE = Dict[str, int]

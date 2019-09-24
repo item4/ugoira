@@ -13,14 +13,20 @@ addons:
   apt:
     packages:
     - libmagickwand-dev
+cache:
+  directories:
+  - $HOME/.cache/pip
+  - $HOME/.cache/pypoetry
+before_install:
+- curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+- export PATH="$HOME/.poetry/bin:$PATH"
 install:
-- pip install -e .[tests,apng]
-- pip install pytest-cov coveralls
+- poetry install -E apng
 script:
 - pytest -v --cov ugoira
 - flake8 ugoira tests
 after_success:
-- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && coveralls || false'
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && codecov || false'
 notifications:
   slack:
     secure: YWBdBV/VyFfQ6f8+LxUuMqG/PL45T/CUQSh9kl7lOuzmsP/Vv73Pbs77qLMTdMNxU8jxrOPkMZPtNCxU51bqRIkWtszDDoPt+DeG1Z+xCdcVMEOeu4+gZ96nrM0UxzAgTlkfPkcPa0nliuC5PRvr6uoIF90rpoCnbZTFfdlHHR3jiV2928WDDX5gQnQ4XGNAvWLxaAf77gyTHyCbxDuHj4XsJqppjxDksro/uQmdhl2rbhjLlq8W3zHg/pf/IKeRDGjEnHzfUZMnPOjt73q3V9c8+1SWAisEQx+/bBBzncX6Ez4tFlAEYlD6LRXzZ54E6oP9G/U3l7zPzOHCBKLK5eh5nK5Oq1Va1hmJfRqEa9niNg8UH8JZUlem212gled1an94c4uX4Y0cmsI8Cozg56pI2Hoz/K0Y1V1EeXLnNj1IV0rc89JU8wxAWMSNV0dcxl6xEHs80P4o8ETebqU7h+BnfVM/BVlksj68Fi36efbFWtoPWu5Et9jaH8A2nzt51mf570bfcMEo+txwPTJQMSGsVOjqN/egzIXeFWQaBYuO+03bGGwR8s5ulgpuC+CihpEMrOSncCfjQlv7zGrxzGPMaXXNMqiqXbVgpgiuYXRYbJRrwEVEZ9mi5+D+DPXqThRs8LZTCroU5J+blblsDEkYBQiC70trJqRHrHvg64w=
