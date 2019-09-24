@@ -7,8 +7,8 @@ Ugoira
 .. image:: https://travis-ci.org/item4/ugoira.svg?branch=master
    :target: https://travis-ci.org/item4/ugoira
 
-.. image:: https://img.shields.io/coveralls/item4/ugoira.svg?
-   :target: https://coveralls.io/r/item4/ugoira
+.. image:: https://codecov.io/gh/item4/ugoira/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/item4/ugoira
 
 Ugoira is download tool for Pixiv Ugoira.
 Pixiv Ugoira is **Ugoku** (Animated) Illustration.
