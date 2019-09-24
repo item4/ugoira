@@ -16,30 +16,11 @@ from fake_useragent import UserAgent
 from requests import Session
 from wand.image import Image
 
-__all__ = (
-    'PixivError',
-    'download_ugoira_zip',
-    'get_illust_url',
-    'is_ugoira',
-    'make_apng',
-    'make_gif',
-    'make_zip',
-    'pixiv',
-    'save',
-    'ugoira_data_regex',
-)
-
 FRAME_DATA_TYPE = Dict[str, int]
 
 #: (:class:`requests.Session`) requests Session for keep headers
 pixiv = Session()
 pixiv.headers['User-Agent'] = UserAgent().chrome
-
-#: (:class:`re.regex`) regular expression for grep ugoira data
-ugoira_data_regex = re.compile(
-    r'pixiv\.context\.ugokuIllustData\s*=\s*'
-    r'(\{"src":".+?","mime_type":".+?","frames":\[.+?\]\})'
-)
 
 
 class PixivError(Exception):
@@ -63,18 +44,19 @@ def get_illust_url(illust_id: int) -> str:
     )
 
 
-def is_ugoira(illust_id: int) -> bool:
-    """Check this image type.
+def get_metadata_url(illust_id: int) -> str:
+    """Get illust Metadata URL from ``illust_id``.
 
     :param illust_id: Pixiv illust_id
     :type illust_id: :class:`int`
-    :return: Which is ugoira or not.
-    :rtype: :class:`bool`
+    :return: Pixiv Metadata URL
+    :rtype: :class:`str`
 
     """
-
-    res = pixiv.get(get_illust_url(illust_id))
-    return '_ugoku-illust-player-container' in res.text
+    return (
+        'https://www.pixiv.net/ajax/illust/'
+        '{}/ugoira_meta'.format(illust_id)
+    )
 
 
 def download_ugoira_zip(illust_id: int) -> Tuple[bytes, FRAME_DATA_TYPE]:
@@ -87,18 +69,19 @@ def download_ugoira_zip(illust_id: int) -> Tuple[bytes, FRAME_DATA_TYPE]:
 
     """
 
-    image_main_url = get_illust_url(illust_id)
-    res = pixiv.get(image_main_url)
-    data = json.loads(ugoira_data_regex.search(res.text).group(1))
-    pixiv.headers['Referer'] = image_main_url
-    res = pixiv.head(data['src'])
-    if res.status_code != 200:
+    url = get_metadata_url(illust_id)
+    data = pixiv.get(url).json()
+    if data['error']:
+        raise PixivError('Given illust-id is not ugoira')
+    pixiv.headers['Referer'] = get_illust_url(illust_id)
+    resp = pixiv.head(data['body']['src'])
+    if resp.status_code != 200:
         raise PixivError('Wrong image src. Please report it with illust-id')
-    res = pixiv.get(data['src'])
-    if res.status_code != 200:
+    resp = pixiv.get(data['body']['src'])
+    if resp.status_code != 200:
         raise PixivError('Can not download image zip')
-    frames = {f['file']: f['delay'] for f in data['frames']}
-    return res.content, frames
+    frames = {f['file']: f['delay'] for f in data['body']['frames']}
+    return resp.content, frames
 
 
 @contextlib.contextmanager

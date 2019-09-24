@@ -40,7 +40,7 @@ from typing import Optional
 
 from click import Path, argument, command, echo, option
 
-from .lib import PixivError, download_ugoira_zip, is_ugoira, save
+from .lib import PixivError, download_ugoira_zip, save
 
 __all__ = 'ugoira',
 
@@ -83,22 +83,19 @@ def ugoira(
     """ugoira command to download Pixiv Ugokuillusts."""
     for i, illust_id in enumerate(illust_ids):
         echo("Downloading {} ({}/{})".format(illust_id, i, len(illust_ids)))
-        if is_ugoira(illust_id):
-            try:
-                blob, frames = download_ugoira_zip(illust_id)
-            except PixivError as e:
-                echo('Error: {}'.format(e), err=True)
-                continue
+        try:
+            blob, frames = download_ugoira_zip(illust_id)
+        except PixivError as e:
+            echo('Error: {}'.format(e), err=True)
+            continue
 
-            filename = dest.format(illust_id, format)
+        filename = dest.format(illust_id, format)
 
-            save(format, filename, blob, frames, speed)
-            echo(
-                'Download was completed successfully.'
-                ' format is {} and output path is {}'.format(
-                    format,
-                    filename,
-                )
+        save(format, filename, blob, frames, speed)
+        echo(
+            'Download was completed successfully.'
+            ' format is {} and output path is {}'.format(
+                format,
+                filename,
             )
-        else:
-            echo('Illust ID {} is not ugoira.'.format(illust_id), err=True)
+        )
