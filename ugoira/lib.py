@@ -11,6 +11,7 @@ import pathlib
 import re
 import tempfile
 import zipfile
+import io
 from typing import Dict, Tuple
 
 from fake_useragent import UserAgent
@@ -113,12 +114,43 @@ def open_zip_blob(blob: bytes):
 
     """
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        tempzipfile = pathlib.Path(tmpdirname) / 'temp.zip'
-        with tempzipfile.open('wb') as f:
-            f.write(blob)
-        with zipfile.ZipFile(str(tempzipfile)) as zf:
-            yield zf
+    f = io.BytesIO(bytes)
+    with zipfile.ZipFile(f) as zf:
+        yield zf
+
+def convert_apng(
+    blob: bytes,
+    frames: FRAME_DATA_TYPE,
+    speed: float=1.0,
+):
+    """Make APNG file from given file data and frame data.
+
+    This function must need apng library dependency.
+
+    :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
+    :type blob: :class:`bytes`
+    :param frames: mapping object of each frame's filename and interval
+    :param speed: frame interval control value
+    :type speed: :class:`float`
+
+    :return: Binary string containing generated APNG file
+
+    """
+
+    from apng import APNG, PNG
+
+    with open_zip_blob(blob) as zf:
+        files = zf.namelist()
+        container = APNG()
+
+        for fname in files:
+            with Image(blob=zf.read(fname)) as frame:
+                container.append(
+                    PNG.from_bytes(frame.make_blob('png')),
+                    delay=int(frames[fname]//speed),
+                )
+
+        return container.to_bytes()
 
 
 def make_apng(
@@ -141,20 +173,10 @@ def make_apng(
 
     """
 
-    from apng import APNG, PNG
 
-    with open_zip_blob(blob) as zf:
-        files = zf.namelist()
-        container = APNG()
-
-        for fname in files:
-            with Image(blob=zf.read(fname)) as frame:
-                container.append(
-                    PNG.from_bytes(frame.make_blob('png')),
-                    delay=int(frames[fname]//speed),
-                )
-
-        container.save(dest)
+    apng_bytes = convert_apng(blob, frames, speed)
+    with open(dest, "wb") as fp:
+        fp.write(apng_bytes)
 
 
 def make_gif(
