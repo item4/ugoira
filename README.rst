@@ -22,11 +22,11 @@ __ http://ugoira.readthedocs.org/en/latest/
 Contribute
 ----------
 
-You must install tests requirements for test and lint.
+You must install poetry for install dependencies.
 
 .. code-block:: console
 
-   $ pip install -e .[tests]
+   $ poetry install
 
 
 License
