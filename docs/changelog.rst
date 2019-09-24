@@ -1,6 +1,14 @@
 Changlog
 ========
 
+Version 0.6.0
+-------------
+- (break) Use ImageMagick 7 instead of 6.
+- (break) Use Poetry.
+- (break) Remove ``is_ugoira`` method.
+- (break) Use ``io.BytesIO`` instead of tempfile (PR #8)
+- (break) Fix to works ugoira command (Issue #5)
+
 Version 0.5.0
 -------------
 
