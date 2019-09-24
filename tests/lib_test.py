@@ -10,7 +10,7 @@ from ugoira.lib import (
     PixivError,
     download_ugoira_zip,
     get_illust_url,
-    is_ugoira,
+    get_metadata_url,
     make_apng,
     make_gif,
     make_zip,
@@ -24,34 +24,10 @@ zip_url = 'https://i.pximg.net/img-zip-ugoira/img/' \
           '2019/04/29/16/09/38/74442143_ugoira600x600.zip'
 
 
-def test_is_ugoira_true(fx_ugoira_body):
-    """Test :func:`ugoira.lib.ugoira`.
+def test_download_ugoira_wrong_illust_id(fx_non_ugoira_body):
+    """Test :func:`ugoira.lib.download_ugoira_zip` with wrong illust-id.
 
-    Result is :const:`True`.
-
-    """
-
-    @responses.activate
-    def test():
-        responses.reset()
-        responses.add(**{
-            'method': responses.GET,
-            'url': get_illust_url(ugoira_id),
-            'body': fx_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
-            'status': 200,
-            'match_querystring': True,
-        })
-
-        assert is_ugoira(ugoira_id)
-
-    test()
-
-
-def test_is_ugoira_false(fx_non_ugoira_body):
-    """Test :func:`ugoira.lib.ugoira`.
-
-    Result is :const:`False`.
+    It must raise :class:`ugoira.lib.PixivError`.
 
     """
 
@@ -60,14 +36,15 @@ def test_is_ugoira_false(fx_non_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(non_ugoira_id),
+            'url': get_metadata_url(ugoira_id),
             'body': fx_non_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })
 
-        assert not is_ugoira(non_ugoira_id)
+        with pytest.raises(PixivError):
+            download_ugoira_zip(ugoira_id)
 
     test()
 
@@ -84,9 +61,9 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(ugoira_id),
+            'url': get_metadata_url(ugoira_id),
             'body': fx_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })
@@ -114,9 +91,9 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(ugoira_id),
+            'url': get_metadata_url(ugoira_id),
             'body': fx_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })
@@ -145,9 +122,9 @@ def test_download_ugoira_zip_success(fx_ugoira_body, fx_ugoira_zip):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(ugoira_id),
+            'url': get_metadata_url(ugoira_id),
             'body': fx_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })

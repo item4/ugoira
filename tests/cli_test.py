@@ -3,7 +3,7 @@ from click.testing import CliRunner
 import responses
 
 from ugoira.cli import ugoira
-from ugoira.lib import get_illust_url
+from ugoira.lib import get_metadata_url
 
 ugoira_id = 74442143
 non_ugoira_id = 74073488
@@ -19,9 +19,9 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(ugoira_id),
+            'url': get_metadata_url(ugoira_id),
             'body': fx_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })
@@ -65,9 +65,9 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(ugoira_id),
+            'url': get_metadata_url(ugoira_id),
             'body': fx_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })
@@ -98,9 +98,9 @@ def test_is_not_ugoira(fx_non_ugoira_body):
         responses.reset()
         responses.add(**{
             'method': responses.GET,
-            'url': get_illust_url(non_ugoira_id),
+            'url': get_metadata_url(non_ugoira_id),
             'body': fx_non_ugoira_body,
-            'content_type': 'text/html; charset=utf-8',
+            'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
         })
@@ -112,7 +112,7 @@ def test_is_not_ugoira(fx_non_ugoira_body):
         )
         assert result.output.strip() == (
             'Downloading {} (0/1)\n'.format(non_ugoira_id) +
-            'Illust ID {} is not ugoira.'.format(non_ugoira_id)
+            'Error: Illust ID {} is not ugoira.'.format(non_ugoira_id)
         )
 
     test()

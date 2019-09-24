@@ -72,7 +72,7 @@ def download_ugoira_zip(illust_id: int) -> Tuple[bytes, FRAME_DATA_TYPE]:
     url = get_metadata_url(illust_id)
     data = pixiv.get(url).json()
     if data['error']:
-        raise PixivError('Given illust-id is not ugoira')
+        raise PixivError('Illust ID {} is not ugoira.'.format(illust_id))
     pixiv.headers['Referer'] = get_illust_url(illust_id)
     resp = pixiv.head(data['body']['src'])
     if resp.status_code != 200:

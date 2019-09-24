@@ -18,7 +18,7 @@ def fx_tmpdir(tmpdir):
 def fx_ugoira_body():
     """Ugoira page data."""
 
-    with open('./tests/mock/ugoira.html') as f:
+    with open('./tests/mock/ugoira.json') as f:
         return f.read().encode('u8')
 
 
@@ -26,7 +26,7 @@ def fx_ugoira_body():
 def fx_non_ugoira_body():
     """Non ugoira page data."""
 
-    with open('./tests/mock/non_ugoira.html') as f:
+    with open('./tests/mock/non_ugoira.json') as f:
         return f.read().encode('u8')
 
 
