@@ -4,7 +4,7 @@ install_requires = [
     'click ~= 6.7',
     'fake_useragent ~= 0.1.11',
     'requests ~= 2.19.1',
-    'Wand ~= 0.4.4',
+    'Wand ~= 0.5.7',
 ]
 
 tests_require = [

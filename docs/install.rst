@@ -12,19 +12,19 @@ Python_ 3.5 or higher
    ugoira is mostly written in Python language, a high-level general-purpose scripting
    language. ugoira was tested in Python 3.5, 3.6 and 3.7.
 
-`Imagemagick 6`_
-   ugoira uses Imagemagick 6 to generate gif images. It's an image
+`Imagemagick 7`_
+   ugoira uses Imagemagick 7 to generate gif images. It's an image
    manipulation toolkit.
 
 Mac OS X
 ++++++++
 
 If you're using Mac, you can find CPython installer in Python_ website's
-download page and you can find `Imagemagick 6`_ installer in Homebrew_.
+download page and you can find `Imagemagick 7`_ installer in Homebrew_.
 
 .. sourcecode:: console
 
-   $ brew install imagemagick@6
+   $ brew install imagemagick
 
 
 Windows
@@ -44,10 +44,10 @@ it can be easily installed using APT:
 .. sourcecode:: console
 
    $ sudo apt-get update
-   $ sudo apt-get install python3 libmagickwand6-dev
+   $ sudo apt-get install python3 libmagickwand-dev
 
 
-.. _`Imagemagick 6`: http://www.imagemagick.org/script/index.php
+.. _`Imagemagick`: http://www.imagemagick.org/script/index.php
 .. _Homebrew: http://brew.sh/
 .. _Python: https://www.python.org/
 
