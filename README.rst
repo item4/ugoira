@@ -11,9 +11,9 @@ Ugoira
   :target: https://codecov.io/gh/item4/ugoira
 
 Ugoira is download tool for Pixiv Ugoira.
-Pixiv Ugoira is **Ugoku** (Animated) Illustration.
+Pixiv Ugoira mean **Ugoku** (Animated) Illustration.
 
-If you need more detail information, `See the docs for details`__.
+You can see more detail information at `project documentation`__.
 
 __ http://ugoira.readthedocs.org/en/latest/
 
