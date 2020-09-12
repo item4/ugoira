@@ -4,10 +4,10 @@ Ugoira
 .. image:: https://readthedocs.org/projects/ugoira/badge/?version=latest
    :target: http://ugoira.readthedocs.org/
 
-.. image:: https://travis-ci.org/item4/ugoira.svg?branch=master
+.. image:: https://travis-ci.org/item4/ugoira.svg?branch=main
    :target: https://travis-ci.org/item4/ugoira
 
-.. image:: https://codecov.io/gh/item4/ugoira/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/item4/ugoira/branch/main/graph/badge.svg
   :target: https://codecov.io/gh/item4/ugoira
 
 Ugoira is download tool for Pixiv Ugoira.
