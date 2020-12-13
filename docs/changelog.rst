@@ -1,6 +1,12 @@
 Changlog
 ========
 
+Version 0.7.0
+-------------
+- (break) Drop support Python 3.5, 3.6, 3.7.
+- (break) Use Poetry.
+- (new) Try to download more nice resolution.
+
 Version 0.6.0
 -------------
 - (break) Use ImageMagick 7 instead of 6.

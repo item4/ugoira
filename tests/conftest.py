@@ -59,6 +59,36 @@ def fx_ugoira_zip(fx_tmpdir):
 
 
 @fixture
+def fx_ugoira_big_zip(fx_tmpdir):
+    """
+    Generates a zip file used in testing
+    instead of downloading an actual ugoira.
+    """
+
+    file = fx_tmpdir / '00000000_ugoira1920x1080.zip'
+    imgs = [
+        fx_tmpdir / '000000.jpg',
+        fx_tmpdir / '000001.jpg',
+        fx_tmpdir / '000002.jpg',
+    ]
+    colors = [
+        Color('red'),
+        Color('blue'),
+        Color('green'),
+    ]
+    for path, color in zip(imgs, colors):
+        with Image(width=200, height=200, background=color) as img:
+            img.save(filename=str(path))
+
+    with zipfile.ZipFile(str(file), 'w') as f:
+        for img in imgs:
+            f.write(str(img), img.name)
+
+    with file.open('rb') as f:
+        return f.read()
+
+
+@fixture
 def fx_ugoira_frames():
     """frames data."""
 

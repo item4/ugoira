@@ -1,24 +1,23 @@
 [tool.poetry]
 name = "ugoira"
-version = "0.6.0"
+version = "0.7.0"
 description = "ugoira for download pixiv ugoira images"
 authors = ["Kim Jin Su <item4_hun@hotmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.5"
-click = "^7.0"
-fake_useragent = "^0.1.11"
-Wand = "^0.5.7"
-apng = {version = "^0.3.3", optional=true}
+python = "^3.8"
+click = "^7.1.2"
+fake-useragent = "^0.1.11"
+Wand = "^0.6.5"
+apng = {version = "^0.3.4", optional=true}
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.1.3"
-pytest-cov = "^2.7.1"
-codecov = "^2.0.15"
-responses = "^0.10.6"
-flake8 = "^3.7.8"
-flake8-import-order = "^0.18.0"
+pytest = "^6.2.0"
+pytest-cov = "^2.10.1"
+responses = "^0.12.1"
+flake8 = "^3.8.4"
+flake8-import-order = "^0.18.1"
 Sphinx = "^2.2.0"
 
 [tool.poetry.extras]
@@ -28,5 +27,5 @@ apng = ["apng"]
 ugoira = "ugoira.cli:ugoira"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

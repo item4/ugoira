@@ -74,14 +74,27 @@ def download_ugoira_zip(illust_id: int) -> Tuple[bytes, FRAME_DATA_TYPE]:
     if data['error']:
         raise PixivError('Illust ID {} is not ugoira.'.format(illust_id))
     pixiv.headers['Referer'] = get_illust_url(illust_id)
-    resp = pixiv.head(data['body']['src'])
-    if resp.status_code != 200:
-        raise PixivError('Wrong image src. Please report it with illust-id')
-    resp = pixiv.get(data['body']['src'])
-    if resp.status_code != 200:
-        raise PixivError('Can not download image zip')
-    frames = {f['file']: f['delay'] for f in data['body']['frames']}
-    return resp.content, frames
+    body = data['body']
+    for key, raising in [['originalSrc', False], ['src', True]]:
+        try:
+            src = body[key]
+        except KeyError:
+            continue
+        resp = pixiv.head(src)
+        if resp.status_code != 200:
+            if raising:
+                raise PixivError(
+                    'Wrong image src. Please report it with illust-id',
+                )
+            continue
+        resp = pixiv.get(src)
+        if resp.status_code != 200:
+            if raising:
+                raise PixivError('Can not download image zip')
+            continue
+        frames = {f['file']: f['delay'] for f in body['frames']}
+        return resp.content, frames
+    raise PixivError('Can not download it. Please report it with illust-id')
 
 
 @contextlib.contextmanager

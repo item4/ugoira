@@ -8,9 +8,9 @@ Prerequisites
 
 Ugoira is made with the following softwares:
 
-Python_ 3.5 or higher
+Python_ 3.8 or higher
    ugoira is mostly written in Python language, a high-level general-purpose scripting
-   language. ugoira was tested in Python 3.5, 3.6 and 3.7.
+   language. ugoira was tested in Python 3.8 and 3.9.
 
 `Imagemagick 7`_
    ugoira uses Imagemagick 7 to generate gif images. It's an image
