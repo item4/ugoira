@@ -1,4 +1,7 @@
+import mimetypes
 import zipfile
+
+from PIL import Image
 
 from apng import APNG
 
@@ -11,21 +14,15 @@ from ugoira.lib import (
     download_ugoira_zip,
     get_metadata_url,
     make_apng,
-    make_gif,
+    make_via_pillow,
     make_zip,
 )
 
-from wand.image import Image
 
-ugoira_id = 74442143
-non_ugoira_id = 74073488
-zip_url = 'https://i.pximg.net/img-zip-ugoira/img/' \
-          '2019/04/29/16/09/38/74442143_ugoira600x600.zip'
-big_zip_url = 'https://i.pximg.net/img-zip-ugoira/img/' \
-              '2019/04/29/16/09/38/74442143_ugoira1920x1080.zip'
-
-
-def test_download_ugoira_wrong_illust_id(fx_non_ugoira_body):
+def test_download_ugoira_wrong_illust_id(
+    ugoira_id,
+    error_meta_body,
+):
     """Test :func:`ugoira.lib.download_ugoira_zip` with wrong illust-id.
 
     It must raise :class:`ugoira.lib.PixivError`.
@@ -38,7 +35,7 @@ def test_download_ugoira_wrong_illust_id(fx_non_ugoira_body):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_non_ugoira_body,
+            'body': error_meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -50,7 +47,12 @@ def test_download_ugoira_wrong_illust_id(fx_non_ugoira_body):
     test()
 
 
-def test_download_ugoira_zip_fail_head(fx_ugoira_body):
+def test_download_ugoira_zip_fail_head(
+    ugoira_id,
+    meta_body,
+    small_zip_url,
+    big_zip_url,
+):
     """Test :func:`ugoira.lib.download_ugoira_zip` with broken link.
 
     It must raise :class:`ugoira.lib.PixivError`.
@@ -69,7 +71,7 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -81,7 +83,7 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 403,
         })
 
@@ -100,7 +102,7 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -117,7 +119,7 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 403,
         })
 
@@ -128,7 +130,12 @@ def test_download_ugoira_zip_fail_head(fx_ugoira_body):
     case2()
 
 
-def test_download_ugoira_zip_fail_get(fx_ugoira_body):
+def test_download_ugoira_zip_fail_get(
+    ugoira_id,
+    meta_body,
+    small_zip_url,
+    big_zip_url,
+):
     """Test :func:`ugoira.lib.download_ugoira_zip` with broken link.
 
     It must raise :class:`ugoira.lib.PixivError`.
@@ -148,7 +155,7 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -160,12 +167,12 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 403,
         })
 
@@ -185,7 +192,7 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -202,12 +209,12 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 403,
         })
 
@@ -219,9 +226,12 @@ def test_download_ugoira_zip_fail_get(fx_ugoira_body):
 
 
 def test_download_ugoira_zip_success(
-    fx_ugoira_body,
-    fx_ugoira_zip,
-    fx_ugoira_big_zip,
+    ugoira_id,
+    meta_body,
+    small_zip_url,
+    big_zip_url,
+    small_image_zip,
+    big_image_zip,
 ):
     """Test :func:`ugoira.lib.download_ugoira_zip` with correct link."""
 
@@ -237,7 +247,7 @@ def test_download_ugoira_zip_success(
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -250,13 +260,13 @@ def test_download_ugoira_zip_success(
         responses.add(**{
             'method': responses.GET,
             'url': big_zip_url,
-            'body': fx_ugoira_big_zip,
+            'body': big_image_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
 
         data, frames = download_ugoira_zip(ugoira_id)
-        assert data == fx_ugoira_big_zip
+        assert data == big_image_zip
 
     @responses.activate
     def case2():
@@ -270,7 +280,7 @@ def test_download_ugoira_zip_success(
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -287,19 +297,19 @@ def test_download_ugoira_zip_success(
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
-            'body': fx_ugoira_zip,
+            'url': small_zip_url,
+            'body': small_image_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
 
         data, frames = download_ugoira_zip(ugoira_id)
-        assert data == fx_ugoira_zip
+        assert data == small_image_zip
 
     @responses.activate
     def case3():
@@ -313,7 +323,7 @@ def test_download_ugoira_zip_success(
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -325,32 +335,34 @@ def test_download_ugoira_zip_success(
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
-            'body': fx_ugoira_zip,
+            'url': small_zip_url,
+            'body': small_image_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
 
         data, frames = download_ugoira_zip(ugoira_id)
-        assert data == fx_ugoira_zip
+        assert data == small_image_zip
 
     case1()
+    case2()
+    case3()
 
 
 def test_make_apng(
     fx_tmpdir,
-    fx_ugoira_zip,
-    fx_ugoira_frames,
+    small_image_zip,
+    frames,
 ):
     """Test :func:`ugoira.lib.make_apng`."""
 
     dest = str(fx_tmpdir / 'test.apng')
-    make_apng(dest, fx_ugoira_zip, fx_ugoira_frames)
+    make_apng(dest, small_image_zip, frames)
     img = APNG.open(dest)
 
     assert len(img.frames) == 3
@@ -361,31 +373,69 @@ def test_make_apng(
 
 def test_make_gif(
     fx_tmpdir,
-    fx_ugoira_zip,
-    fx_ugoira_frames,
+    small_image_zip,
+    frames,
 ):
     """Test :func:`ugoira.lib.make_gif`."""
 
     dest = str(fx_tmpdir / 'test.gif')
-    make_gif(dest, fx_ugoira_zip, fx_ugoira_frames)
-    with Image(filename=dest) as img:
-        assert img.format == 'GIF'
-        assert len(img.sequence) == 3
-        assert img.sequence[0].delay == 100
-        assert img.sequence[1].delay == 200
-        assert img.sequence[2].delay == 300
+    make_via_pillow(dest, small_image_zip, frames, 1.0, 'gif')
+    im = Image.open(dest)
+
+    assert im.format == 'GIF'
+    assert im.info['duration'] == 1000 / 10
+    assert im.info['loop'] == 0
+    im.seek(im.tell() + 1)
+
+    assert im.format == 'GIF'
+    assert im.info['duration'] == 2000 / 10
+    assert im.info['loop'] == 0
+    im.seek(im.tell() + 1)
+
+    assert im.format == 'GIF'
+    assert im.info['duration'] == 3000 / 10
+    assert im.info['loop'] == 0
+
+    with pytest.raises(EOFError):
+        assert im.seek(im.tell() + 1)
+
+
+def test_make_webp(
+    fx_tmpdir,
+    small_image_zip,
+    frames,
+):
+    """Test :func:`ugoira.lib.make_gif`."""
+
+    dest = str(fx_tmpdir / 'test.webp')
+    make_via_pillow(dest, small_image_zip, frames, 1.0, 'webp')
+    im = Image.open(dest)
+    assert im.format == 'WEBP'
+    assert im.info['loop'] == 0
+
+
+def test_make_pdf(
+    fx_tmpdir,
+    small_image_zip,
+    frames,
+):
+    """Test :func:`ugoira.lib.make_gif`."""
+
+    dest = str(fx_tmpdir / 'test.pdf')
+    make_via_pillow(dest, small_image_zip, frames, 1.0, 'pdf')
+    assert mimetypes.guess_type(dest, strict=True) == ('application/pdf', None)
 
 
 def test_make_zip(
     fx_tmpdir,
-    fx_ugoira_zip,
-    fx_ugoira_frames,
+    small_image_zip,
+    frames,
 ):
     """Test :func:`ugoira.lib.make_zip` with correct link."""
 
     dest = str(fx_tmpdir / 'test.zip')
 
-    make_zip(dest, fx_ugoira_zip)
+    make_zip(dest, small_image_zip)
 
     with zipfile.ZipFile(dest) as f:
-        assert set(f.namelist()) == set(fx_ugoira_frames.keys())
+        assert set(f.namelist()) == set(frames.keys())

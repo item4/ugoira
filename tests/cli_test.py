@@ -5,15 +5,15 @@ import responses
 from ugoira.cli import ugoira
 from ugoira.lib import get_metadata_url
 
-ugoira_id = 74442143
-non_ugoira_id = 74073488
-zip_url = 'https://i.pximg.net/img-zip-ugoira/img/2019/' \
-          '04/29/16/09/38/74442143_ugoira600x600.zip'
-big_zip_url = 'https://i.pximg.net/img-zip-ugoira/img/' \
-              '2019/04/29/16/09/38/74442143_ugoira1920x1080.zip'
 
-
-def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
+def test_download(
+    ugoira_id,
+    meta_body,
+    small_zip_url,
+    big_zip_url,
+    small_image_zip,
+    big_image_zip,
+):
     """Test for command download"""
 
     @responses.activate
@@ -28,7 +28,7 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -41,7 +41,7 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
         responses.add(**{
             'method': responses.GET,
             'url': big_zip_url,
-            'body': fx_ugoira_big_zip,
+            'body': big_image_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
@@ -74,7 +74,7 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -91,13 +91,13 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
-            'body': fx_ugoira_zip,
+            'url': small_zip_url,
+            'body': small_image_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
@@ -130,7 +130,7 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -142,13 +142,13 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
-            'body': fx_ugoira_zip,
+            'url': small_zip_url,
+            'body': small_image_zip,
             'content_type': 'application/zip',
             'status': 200,
         })
@@ -174,7 +174,12 @@ def test_download(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip, fx_ugoira_big_zip):
     case3()
 
 
-def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
+def test_error(
+    ugoira_id,
+    meta_body,
+    small_zip_url,
+    big_zip_url,
+):
     """Test for encount PixivError"""
 
     @responses.activate
@@ -189,7 +194,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -201,7 +206,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 503,
         })
 
@@ -226,7 +231,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -243,7 +248,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 503,
         })
 
@@ -268,7 +273,7 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(ugoira_id),
-            'body': fx_ugoira_body,
+            'body': meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,
@@ -280,12 +285,12 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
         })
         responses.add(**{
             'method': responses.HEAD,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 200,
         })
         responses.add(**{
             'method': responses.GET,
-            'url': zip_url,
+            'url': small_zip_url,
             'status': 403,
         })
 
@@ -303,7 +308,10 @@ def test_error(fx_tmpdir, fx_ugoira_body, fx_ugoira_zip):
     case3()
 
 
-def test_is_not_ugoira(fx_non_ugoira_body):
+def test_is_not_ugoira(
+    non_ugoira_id,
+    error_meta_body,
+):
     """Test for command download as gif"""
 
     @responses.activate
@@ -312,7 +320,7 @@ def test_is_not_ugoira(fx_non_ugoira_body):
         responses.add(**{
             'method': responses.GET,
             'url': get_metadata_url(non_ugoira_id),
-            'body': fx_non_ugoira_body,
+            'body': error_meta_body,
             'content_type': 'application/json',
             'status': 200,
             'match_querystring': True,

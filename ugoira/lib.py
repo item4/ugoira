@@ -8,13 +8,14 @@ Ugoira Download Library
 import contextlib
 import io
 import zipfile
-from typing import Dict, Tuple
+from typing import ContextManager, Dict, Tuple
+
+from PIL import Image
 
 from fake_useragent import UserAgent
 
 from requests import Session
 
-from wand.image import Image
 
 FRAME_DATA_TYPE = Dict[str, int]
 
@@ -98,7 +99,7 @@ def download_ugoira_zip(illust_id: int) -> Tuple[bytes, FRAME_DATA_TYPE]:
 
 
 @contextlib.contextmanager
-def open_zip_blob(blob: bytes):
+def open_zip_blob(blob: bytes) -> ContextManager[zipfile.ZipFile]:
     """Make temporary zip file and open it for touch inner files
 
     :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
@@ -139,12 +140,12 @@ def convert_apng(
         files = zf.namelist()
         container = APNG()
 
-        for fname in files:
-            with Image(blob=zf.read(fname)) as frame:
-                container.append(
-                    PNG.from_bytes(frame.make_blob('png')),
-                    delay=int(frames[fname]//speed),
-                )
+        for file in files:
+            f = io.BytesIO(zf.read(file))
+            container.append(
+                PNG.open_any(f),
+                delay=int(frames[file]//speed),
+            )
 
         return container.to_bytes()
 
@@ -154,6 +155,7 @@ def make_apng(
     blob: bytes,
     frames: FRAME_DATA_TYPE,
     speed: float = 1.0,
+    *args,
 ):
     """Make APNG file from given file data and frame data.
 
@@ -174,13 +176,14 @@ def make_apng(
         fp.write(apng_bytes)
 
 
-def make_gif(
+def make_via_pillow(
     dest: str,
     blob: bytes,
     frames: FRAME_DATA_TYPE,
     speed: float = 1.0,
+    format: str = 'gif',
 ):
-    """Make GIF file from given file data and frame data.
+    """Make animated file from given file data and frame data.
 
     :param dest: path of output file
     :type dest: :class:`str`
@@ -189,36 +192,50 @@ def make_gif(
     :param frames: mapping object of each frame's filename and interval
     :param speed: frame interval control value
     :type speed: :class:`float`
+    :param format: format of result file
+    :type format: :class:`str`
 
     """
 
     with open_zip_blob(blob) as zf:
         files = zf.namelist()
-        first_image = zf.read(files[0])
+        images = []
+        durations = []
+        width = 0
+        height = 0
+        for file in files:
+            f = io.BytesIO(zf.read(file))
+            im = Image.open(fp=f)
+            width = max(im.width, width)
+            height = max(im.height, height)
+            images.append(im)
+            if format == 'gif':
+                durations.append(frames[file]//10//speed)
+            elif format == 'webp':
+                durations.append(int(frames[file] / speed))
 
-        with Image(blob=first_image) as img:
-            width = img.width
-            height = img.height
+        first_im = images.pop(0)
+        kwargs = {
+            'format': format,
+            'save_all': True,
+            'append_images': images,
+        }
+        if format == 'gif':
+            kwargs['duration'] = durations
+            kwargs['loop'] = 0
+        elif format == 'webp':
+            kwargs['duration'] = durations
+            kwargs['lossless'] = True
+            kwargs['quality'] = 100
+            kwargs['method'] = 6
 
-        with Image(width=width, height=height) as container:
-            container.sequence.clear()  # remove first empty frame
-            for fname in files:
-                with Image(blob=zf.read(fname)) as orignal_frame:
-                    with orignal_frame.convert('gif') as gif_frame:
-                        container.sequence.append(gif_frame.sequence[0])
-                        with container.sequence[-1]:
-                            container.sequence[-1].delay = int(
-                                frames[fname]//10//speed
-                            )
-
-            container.save(filename=dest)
+        first_im.save(dest, **kwargs)
 
 
 def make_zip(
     dest: str,
     blob: bytes,
     *args,
-    **kwargs
 ):
     """Make ZIP file from given file data.
 
@@ -257,5 +274,7 @@ def save(
     {
         'zip': make_zip,
         'apng': make_apng,
-        'gif': make_gif,
-    }.get(format)(dest, blob, frames, speed)
+        'gif': make_via_pillow,
+        'pdf': make_via_pillow,
+        'webp': make_via_pillow,
+    }.get(format)(dest, blob, frames, speed, format)

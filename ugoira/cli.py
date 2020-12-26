@@ -26,7 +26,7 @@ There are options as well:
 .. option:: -f <file_format>
 
    Format of result file.
-   You can select apng, gif, and zip format.
+   You can select apng, gif, webp, and zip format.
    Default value is gif.
 
 .. option:: --dest <path>
@@ -60,7 +60,7 @@ __all__ = 'ugoira',
     type=str,
     default='gif',
     help='Format of result file.'
-         ' You can select apng, gif, and zip format.'
+         ' You can select apng, gif, webp, and zip format.'
          ' Default value is gif.'
 )
 @option(

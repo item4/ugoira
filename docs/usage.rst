@@ -2,7 +2,7 @@ Usage
 =====
 
 Understanding ``illust-id``
----------------------------------
+---------------------------
 
 :program:`ugoira` needs ``illust-id`` for download target.
 
@@ -34,6 +34,42 @@ If you can't find the file, type this.
 
    $ pwd
 
+Limitation of GIF
++++++++++++++++++
+
+GIF only supports 256 colors in an image.
+If you download a colorful ugoira as GIF, the downloaded image will be discolored
+and lose some of its colors.
+
+
+Download as WEBP
+----------------
+
+You can can also download ugoira as WEBP with system dependency.
+If you want to download the ``44525295`` as WEBP, at first, install `webp library`_ and type it on
+``cmd`` or terminal.
+
+.. sourcecode:: console
+
+   $ ugoira --format=webp 44525295
+
+If you can't find the file, type this.
+
+.. sourcecode:: console
+
+   $ pwd
+
+.. _webp library: https://developers.google.com/speed/webp/
+
+
+Known issues
+++++++++++++
+
+1. Generating WEBP is slower than GIF because WEBP is lossless and this tool make best quality output.
+2. Generated WEBP file seem slower than GIF file. It is problem of third-party library, pillow, and I wait for fix that. See more detail `this issue on GitHub`_
+
+.. _this issue on GitHub: https://github.com/python-pillow/Pillow/issues/4313
+
 
 Download as APNG
 ----------------
@@ -43,7 +79,7 @@ If you want to download the ``44525295`` as APNG, type it on
 ``cmd`` or terminal.
 
 .. sourcecode:: console
-   
+
    $ pip install ugoira[apng]
    $ ugoira --format=apng 44525295
 
@@ -66,12 +102,22 @@ For example, if you want to accelerate the speed by 10x, give 10:
    $ ugoira --speed 10 44525295
 
 
-Limitation of GIF
-+++++++++++++++++
+Download as PDF
+---------------
 
-GIF only supports 256 colors in an image.
-If you download a colorful ugoira as GIF, the downloaded image will be discolored
-and lose some of its colors.
+You can download ugoira as PDF. It is collection of each frames per page.
+If you want to download the ``44525295`` as ZIP, type it on
+``cmd`` or terminal.
+
+.. sourcecode:: console
+
+   $ ugoira --format=pdf 44525295
+
+If you can't find the file, type this.
+
+.. sourcecode:: console
+
+   $ pwd
 
 
 Download as ZIP
@@ -111,8 +157,8 @@ You may find this useful when downloading multiple files at once.
 In the example above, the output filename would be 'number_44525295_ugoira.gif'.
 
 
-Download multiple files
------------------------
+Download multiple ugoira
+------------------------
 
 Simply pass multiple illust-ids:
 

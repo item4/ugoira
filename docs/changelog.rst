@@ -1,5 +1,13 @@
-Changlog
-========
+Changelog
+=========
+
+Version 0.8.0
+-------------
+- (break) Remove dependency with ImageMagick and use pillow now.
+- (new) Support WEBP format.
+- (new) Support PDF format.
+- (misc) Fix docs.
+- (misc) Bump deps.
 
 Version 0.7.0
 -------------

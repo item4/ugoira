@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ugoira"
-version = "0.7.0"
+version = "0.8.0"
 description = "ugoira for download pixiv ugoira images"
 authors = ["Kim Jin Su <item4_hun@hotmail.com>"]
 license = "MIT"
@@ -9,16 +9,17 @@ license = "MIT"
 python = "^3.8"
 click = "^7.1.2"
 fake-useragent = "^0.1.11"
-Wand = "^0.6.5"
 apng = {version = "^0.3.4", optional=true}
+Pillow = "^8.0.1"
+requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.0"
+pytest = "^6.2.1"
 pytest-cov = "^2.10.1"
 responses = "^0.12.1"
 flake8 = "^3.8.4"
 flake8-import-order = "^0.18.1"
-Sphinx = "^2.2.0"
+Sphinx = "^3.4.1"
 
 [tool.poetry.extras]
 apng = ["apng"]

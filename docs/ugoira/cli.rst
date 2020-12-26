@@ -1,3 +1,1 @@
-
 .. automodule:: ugoira.cli
-   :members:
