@@ -62,6 +62,6 @@ intersphinx_mapping = {
     'requests': ('https://requests.readthedocs.io/en/master', None),
 }
 autodoc_default_options = {
-    'members': True,
     'member-order': 'bysource',
 }
+master_doc = 'index'

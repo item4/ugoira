@@ -1,1 +1,2 @@
 .. automodule:: ugoira.cli
+   :members:
