@@ -10,7 +10,7 @@ python = "^3.8"
 click = "^7.1.2"
 fake-useragent = "^0.1.11"
 apng = {version = "^0.3.4", optional=true}
-Pillow = "^8.0.1"
+Pillow = ">=8.0.1,<10.0.0"
 requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
