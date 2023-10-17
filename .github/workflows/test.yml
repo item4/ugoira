@@ -1,0 +1,58 @@
+name: Test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  check-coding-convention:
+    name: Check Coding Convention
+    runs-on: ubuntu-latest
+    steps:
+      # Set-up
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      # Install Dependencies
+      - name: Install Checkers
+        run: pip install black ruff
+
+      # Lint
+      - name: Check coding convention
+        run: ruff check ugoira tests
+      - name: Check missing autofix
+        run: black --check ugoira tests
+
+  test-program:
+    name: Test Program
+    runs-on: ubuntu-latest
+    steps:
+      # Set-up
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Setup Poetry
+        run: |
+          pipx install --python $(which python) poetry
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip setuptools wheel
+          poetry install
+          echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
+      # Test
+      - name: Run test cases
+        run: pytest --cov=ugoira --cov-report=xml tests
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml

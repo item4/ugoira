@@ -1,6 +1,21 @@
 Changelog
 =========
 
+Version 0.9.0
+-------------
+
+- (break) Drop support Python 3.8, 3.9 and 3.10.
+- (break) Remove ``requests`` as core dependency for HTTP operation, and use ``httpx`` instead.
+- (break) Remove ``apng`` as extra dependency for supporting APNG format and use ``Pillow`` only.
+- (packaging) Add readme and repo/docs url.
+- (mics) Use ``ruff`` for coding style linter.
+- (mics) Use ``black`` for code formatter.
+- (misc) Rewrite docs.
+- (misc) Bump almost deps.
+- (misc) Make ``.readthedocs.yaml`` for current Read The Docs API.
+- (misc) Use GitHub Actions for CI.
+- (misc) Reactivate CodeCov for coverage.
+
 Version 0.8.0
 -------------
 - (break) Remove dependency with ImageMagick and use pillow now.

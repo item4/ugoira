@@ -6,18 +6,18 @@ This guide introduces how to install ugoira.
 Prerequisites
 -------------
 
-Ugoira is made with the following softwares:
+Ugoira is made with the following software:
 
-Python_ 3.8 or higher
+Python_ 3.11 or higher
    ugoira is mostly written in Python language, a high-level general-purpose scripting
-   language. ugoira support Python 3.8 and 3.9.
+   language. ugoira support Python 3.11 or higher only.
 
 
 .. _Python: https://www.python.org/
 
 
-Install with pip
-----------------
+Install via pip
+---------------
 
 Now we can install ugoira by command line. If you use Windows, open
 the ``cmd``. If you use macOS or Linux, open the terminal, And type this
@@ -26,11 +26,20 @@ the ``cmd``. If you use macOS or Linux, open the terminal, And type this
 
    $ pip3 install ugoira
 
-If you want to handle apng format, Type this
+
+Install via pipx
+----------------
+
+If you prefer pipx_, you can install via pipx also.
 
 .. sourcecode:: console
 
-   $ pip3 install ugoira[apng]
+   $ pipx install ugoira
+
+.. _pipx: https://github.com/pypa/pipx
+
+Hello World!
+------------
 
 Install is completed. You can test it by issuing this command.
 

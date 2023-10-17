@@ -26,8 +26,8 @@ There are options as well:
 .. option:: -f <file_format>
 
    Format of result file.
-   You can select apng, gif, webp, and zip format.
-   Default value is gif.
+   You can select ``apng``, ``gif``, ``pdf``, ``webp``, and ``zip`` format.
+   Default value is ``gif``.
 
 .. option:: --dest <path>
 .. option:: -d <path>
@@ -36,66 +36,75 @@ There are options as well:
    Default is ``./<illust-id>.<format>``.
 
 """
-from typing import Optional
+from pathlib import Path
 
-from click import Path, argument, command, echo, option
+from click import Path as ClickPath
+from click import argument
+from click import command
+from click import echo
+from click import option
 
-from .lib import PixivError, download_ugoira_zip, save
+from .lib import PixivError
+from .lib import download_ugoira_zip
+from .lib import save
 
-__all__ = 'ugoira',
+__all__ = ("ugoira",)
 
 
 @command()
 @option(
-    '--speed',
+    "--speed",
     type=float,
     default=1.0,
-    help="If you want to make animated image file, "
-         "you can divide seconds of each frames's interval."
-         " Default value is 1.0 (no change)",
+    help=(
+        "If you want to make animated image file, "
+        "you can divide seconds of each frames's interval."
+        " Default value is 1.0 (no change)"
+    ),
 )
 @option(
-    '--format',
-    '-f',
+    "--format",
+    "-f",
     type=str,
-    default='gif',
-    help='Format of result file.'
-         ' You can select apng, gif, webp, and zip format.'
-         ' Default value is gif.'
+    default="gif",
+    help=(
+        "Format of result file."
+        " You can select apng, gif, webp, and zip format."
+        " Default value is gif."
+    ),
 )
 @option(
-    '--dest',
-    '-d',
-    type=Path(),
-    default='{}.{}',
-    help='A format string specifying the path of downloaded files.'
-         ' The illust ID and your chosen format will replace'
-         ' {}s in it, if any.'
-         ' Default is \'./{}.{}\'.'
+    "--dest",
+    "-d",
+    type=ClickPath(),
+    default="{}.{}",
+    help=(
+        "A format string specifying the path of downloaded files."
+        " The illust ID and your chosen format will replace"
+        " {}s in it, if any."
+        " Default is './{}.{}'."
+    ),
 )
-@argument('illust-ids', type=int, nargs=-1)
+@argument("illust-ids", type=int, nargs=-1)
 def ugoira(
     speed: float,
     format: str,
-    dest: Optional[str],
+    dest: str | None,
     illust_ids: tuple,
 ):
     """ugoira command to download Pixiv Ugokuillusts."""
     for i, illust_id in enumerate(illust_ids):
-        echo("Downloading {} ({}/{})".format(illust_id, i, len(illust_ids)))
+        echo(f"Downloading {illust_id} ({i}/{len(illust_ids)})")
         try:
             blob, frames = download_ugoira_zip(illust_id)
         except PixivError as e:
-            echo('Error: {}'.format(e), err=True)
+            echo(f"Error: {e}", err=True)
             continue
 
-        filename = dest.format(illust_id, format)
+        path = Path(dest.format(illust_id, format))
 
-        save(format, filename, blob, frames, speed)
+        save(format, path, blob, frames, speed)
         echo(
-            'Download was completed successfully.'
-            ' format is {} and output path is {}'.format(
-                format,
-                filename,
-            )
+            "Download was completed successfully."
+            f" format is {format} and output path is {path!s}",
         )
