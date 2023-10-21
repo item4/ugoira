@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 0.9.1
+-------------
+Not released yet.
+
+- (mics) Apply security PR from GitHub Dependabot.
+- (mics) Update GitHub Actions deps.
+- (mics) Update black and reformat some code.
+- (mics) Update ruff.
+
 Version 0.9.0
 -------------
 
