@@ -36,6 +36,7 @@ There are options as well:
    Default is ``./<illust-id>.<format>``.
 
 """
+
 from pathlib import Path
 
 from click import Path as ClickPath
