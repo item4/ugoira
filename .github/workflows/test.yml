@@ -13,9 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       # Install Dependencies
       - name: Install Checkers
         run: pip install black ruff
@@ -34,9 +34,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Setup Poetry
         run: |
           pipx install --python $(which python) poetry
@@ -51,8 +51,15 @@ jobs:
           echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
       # Test
       - name: Run test cases
-        run: pytest --cov=ugoira --cov-report=xml tests
+        run: pytest -W always::DeprecationWarning -v --cov=ugoira --cov-report=xml --junitxml=junit.xml tests
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}]
