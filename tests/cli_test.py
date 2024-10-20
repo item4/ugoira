@@ -307,7 +307,6 @@ def test_is_not_ugoira(
     runner = CliRunner()
     result = runner.invoke(ugoira, [str(non_ugoira_id)])
     assert (
-        result.output.strip()
-        == f"Downloading {non_ugoira_id} (0/1)\n"
+        result.output.strip() == f"Downloading {non_ugoira_id} (0/1)\n"
         f"Error: Illust ID {non_ugoira_id} is not ugoira."
     )

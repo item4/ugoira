@@ -7,7 +7,7 @@ from PIL import Image
 from PIL import ImageColor
 
 
-@pytest.fixture()
+@pytest.fixture
 def fx_tmpdir(tmpdir):
     """Make :class:`pathlib.Path` instance of ```tmpdir```."""
 
@@ -59,7 +59,7 @@ def error_meta_body():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def small_image_zip(fx_tmpdir):
     """
     Generates a zip file used in testing
@@ -88,7 +88,7 @@ def small_image_zip(fx_tmpdir):
         return f.read()
 
 
-@pytest.fixture()
+@pytest.fixture
 def big_image_zip(fx_tmpdir):
     """
     Generates a zip file used in testing
@@ -117,7 +117,7 @@ def big_image_zip(fx_tmpdir):
         return f.read()
 
 
-@pytest.fixture()
+@pytest.fixture
 def frames():
     """frames data."""
 

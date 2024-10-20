@@ -16,6 +16,7 @@ from PIL import Image
 from fake_useragent import UserAgent
 
 FrameData = dict[str, int]
+HTTP_OK = 200
 
 #: (:class:`httpx.Client`) httpx Client for keep headers
 pixiv = httpx.Client(
@@ -75,14 +76,14 @@ def download_ugoira_zip(illust_id: int) -> tuple[bytes, FrameData]:
         except KeyError:
             continue
         resp = pixiv.head(src)
-        if resp.status_code != 200:
+        if resp.status_code != HTTP_OK:
             if raising:
                 raise PixivError(
                     "Wrong image src. Please report it with illust-id",
                 )
             continue
         resp = pixiv.get(src)
-        if resp.status_code != 200:
+        if resp.status_code != HTTP_OK:
             if raising:
                 raise PixivError("Can not download image zip")
             continue
