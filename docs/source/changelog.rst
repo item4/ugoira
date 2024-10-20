@@ -1,14 +1,15 @@
 Changelog
 =========
 
-Version 0.9.1
+Version 0.10.0
 -------------
 Not released yet.
 
-- (mics) Apply security PR from GitHub Dependabot.
+- (break) Use Python 3.12 for development.
+- (break) Drop support Python 3.11
+- (break) Update almost dependencies.
 - (mics) Update GitHub Actions deps.
-- (mics) Update black and reformat some code.
-- (mics) Update ruff.
+- (mics) Reformat codes following black and ruff.
 
 Version 0.9.0
 -------------

@@ -8,16 +8,16 @@ Prerequisites
 
 Ugoira is made with the following software:
 
-Python_ 3.11 or higher
+Python_ 3.12 or higher
    ugoira is mostly written in Python language, a high-level general-purpose scripting
-   language. ugoira support Python 3.11 or higher only.
+   language. ugoira support Python 3.12 or higher only.
 
 
 .. _Python: https://www.python.org/
 
 
-Install via pip
----------------
+Install via pip (manual)
+------------------------
 
 Now we can install ugoira by command line. If you use Windows, open
 the ``cmd``. If you use macOS or Linux, open the terminal, And type this
@@ -27,8 +27,8 @@ the ``cmd``. If you use macOS or Linux, open the terminal, And type this
    $ pip3 install ugoira
 
 
-Install via pipx
-----------------
+Install via pipx (recommended)
+------------------------------
 
 If you prefer pipx_, you can install via pipx also.
 
