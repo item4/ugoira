@@ -3,7 +3,6 @@ Changelog
 
 Version 0.10.0
 -------------
-Not released yet.
 
 - (break) Use Python 3.12 for development.
 - (break) Drop support Python 3.11
