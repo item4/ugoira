@@ -10,6 +10,7 @@ from ugoira.lib import download_ugoira_zip
 from ugoira.lib import get_metadata_url
 from ugoira.lib import make_via_pillow
 from ugoira.lib import make_zip
+from ugoira.lib import open_zip_blob
 
 
 def test_download_ugoira_wrong_illust_id(
@@ -418,3 +419,11 @@ def test_make_zip(
 
     with zipfile.ZipFile(dest) as f:
         assert set(f.namelist()) == set(frames.keys())
+
+
+def test_open_zip_blob_wrong_type():
+    """Test :func:`ugoira.lib.open_zip_blob` with wrong type."""
+
+    with pytest.raises(SystemExit):
+        with open_zip_blob(None):
+            pass
