@@ -424,6 +424,5 @@ def test_make_zip(
 def test_open_zip_blob_wrong_type():
     """Test :func:`ugoira.lib.open_zip_blob` with wrong type."""
 
-    with pytest.raises(SystemExit):
-        with open_zip_blob(None):
-            pass
+    with pytest.raises(SystemExit), open_zip_blob(None):
+        pass
