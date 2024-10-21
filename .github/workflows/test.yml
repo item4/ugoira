@@ -51,7 +51,7 @@ jobs:
           echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
       # Test
       - name: Run test cases
-        run: pytest -W always::DeprecationWarning -v --cov=ugoira --cov-report=xml --junitxml=junit.xml tests
+        run: pytest -W always::DeprecationWarning -v --cov=ugoira --cov-report=xml --junitxml=junit.xml -o junit_family=legacy tests
       - name: Upload coverage
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v4
