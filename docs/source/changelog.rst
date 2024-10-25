@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 0.11.0
+-------------
+Not released yet.
+
+- (mics) Update dependencies.
+
+
 Version 0.10.0
 -------------
 
