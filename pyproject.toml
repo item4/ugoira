@@ -108,7 +108,7 @@ tests = ["tests"]
 
 [tool.poetry]
 name = "ugoira"
-version = "0.10.0"
+version = "0.10.1a0"
 description = "ugoira for download pixiv ugoira images"
 authors = ["Kim, Jin Su <item4@localhost.com>"]
 license = "MIT"

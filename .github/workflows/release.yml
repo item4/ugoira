@@ -1,0 +1,81 @@
+name: Release
+
+env:
+  name: ugoira
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-dist:
+    name: 📦 Build distribution 
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+        cache: "poetry"
+    - name: Setup Poetry
+      run: pipx install --python $(which python) poetry
+    - name: Install dependencies
+      run: poetry install
+    - name: Build distribution
+      run: poetry build
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+  publish-to-pypi:
+    name: Publish Python distribution package to PyPI
+    runs-on: ubuntu-latest
+    needs: build-dist
+    environment:
+      name: pypi
+      url: https://pypi.org/p/${{ env.name }}
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-dist-to-github:
+    name: Upload Python distribution package to GitHub Release
+    needs:
+    - publish-to-pypi
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # IMPORTANT: mandatory for making GitHub Releases
+      id-token: write  # IMPORTANT: mandatory for sigstore
+
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Sign the dists with Sigstore
+      uses: sigstore/gh-action-sigstore-python@v3.0.0
+      with:
+        inputs: >-
+          ./dist/*.tar.gz
+          ./dist/*.whl
+    - name: Upload artifact signatures to GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: >-
+        gh release upload
+        '${{ github.ref_name }}' dist/**
+        --repo '${{ github.repository }}'
