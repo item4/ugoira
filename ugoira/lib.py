@@ -9,6 +9,7 @@ import contextlib
 import io
 import sys
 import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 
 import httpx
@@ -93,7 +94,7 @@ def download_ugoira_zip(illust_id: int) -> tuple[bytes, FrameData]:
 
 
 @contextlib.contextmanager
-def open_zip_blob(blob: bytes) -> zipfile.ZipFile:
+def open_zip_blob(blob: bytes) -> Iterator[zipfile.ZipFile]:
     """Make temporary zip file and open it for touch inner files
 
     :param blob: blob of zip file from :func:`ugoira.lib.download_ugoira_zip`
