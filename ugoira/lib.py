@@ -104,8 +104,7 @@ def open_zip_blob(blob: bytes) -> Iterator[zipfile.ZipFile]:
 
     if not isinstance(blob, bytes | bytearray):
         print(
-            "Parameter `blob` must be of types (bytes, bytearray). Passed"
-            f" {type(blob)}",
+            f"Parameter `blob` must be of types (bytes, bytearray). Passed {type(blob)}",
             file=sys.stderr,
         )
         raise SystemExit(1)
