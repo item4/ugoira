@@ -44,7 +44,7 @@ jobs:
           python-version: "${{ matrix.python_version }}"
           cache: "poetry"
       - name: Install dependencies
-        run: poetry install --with dev
+        run: poetry install -E dev
       - name: Run test cases
         run: poetry run pytest -W always::DeprecationWarning -v --cov=ugoira --cov-report=xml --junitxml=junit.xml -o junit_family=legacy tests
       - name: Upload coverage
