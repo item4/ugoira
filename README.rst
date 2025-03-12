@@ -26,7 +26,7 @@ You must install poetry for install dependencies.
 
 .. code-block:: console
 
-   $ poetry install
+   $ poetry install -E dev
 
 
 License
