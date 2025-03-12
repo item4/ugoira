@@ -5,7 +5,9 @@ Version 0.11.0
 -------------
 Not released yet.
 
-- (mics) Update dependencies.
+- (break) Use Python 3.13 for development.
+- (break) Use Poetry 2.1 for packaging.
+- (break) Update almost dependencies.
 
 
 Version 0.10.0
